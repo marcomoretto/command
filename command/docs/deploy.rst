@@ -57,4 +57,5 @@ That's it! You should be able to point your browser to http://localhost and logi
 
 Manual Deploy
 -------------
+
 <TODO>
