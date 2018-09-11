@@ -1,0 +1,151 @@
+version: '2'
+
+services:
+  nginx:
+    build: ./nginx/
+    ports:
+      - "4242:80"
+    volumes_from:
+      - web
+    links:
+      - web:web
+      - daphne:daphne
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.2
+
+  postgres:
+    image: postgres:latest
+    volumes_from:
+      - pg_data
+    volumes:
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    env_file:
+      - env
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.3
+
+  web:
+    build: .
+    env_file: env
+    expose:
+      - "80"
+    links:
+      - postgres:postgres
+    volumes_from:
+      - web_data
+    volumes:
+      - .:/app
+    command: gunicorn cport.wsgi:application -w 2 -b :8000
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.4
+
+  daphne:
+    build: .
+    env_file: env
+    expose:
+      - "8001"
+    links:
+      - postgres:postgres
+      - web:web
+      - rabbitmq:rabbitmq
+      - redis:redis
+    volumes_from:
+      - web_data
+    volumes:
+      - .:/app
+    #command: bash -c "python manage.py runworker && daphne -b 0.0.0.0 -p 8001 cport.asgi:channel_layer"
+    tty: true
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.5
+
+  worker:
+    build: .
+    env_file: env
+    expose:
+      - "8001"
+    links:
+      - postgres:postgres
+      - web:web
+      - rabbitmq:rabbitmq
+      - redis:redis
+      - daphne:daphne
+    volumes_from:
+      - web_data
+    volumes:
+      - .:/app
+    #command: bash -c "python manage.py runworker && daphne -b 0.0.0.0 -p 8001 cport.asgi:channel_layer"
+    tty: true
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.6
+
+  rabbitmq:
+    restart: always
+    image: rabbitmq:3-management
+    expose:
+      - "5672"
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.7
+
+  redis:
+    restart: always
+    image: redis
+    expose:
+      - "6379"
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.8
+
+  celery:
+    build: .
+    restart: always
+    links:
+      - postgres:postgres
+      - web:web
+      - rabbitmq:rabbitmq
+      - redis:redis
+    env_file: env
+    volumes_from:
+      - web_data
+    volumes:
+      - .:/app
+    command: celery -A cport worker -l info --concurrency=8 -Ofair --pool=prefork
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.9
+
+  pg_data:
+    restart: always
+    image: alpine
+    volumes:
+      - /var/lib/postgresql
+    command: "true"
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.10
+
+  web_data:
+    restart: always
+    image: alpine
+    volumes:
+      - /app
+    command: "true"
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.11
+
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.22.0.0/16
+          gateway: 172.22.0.1
