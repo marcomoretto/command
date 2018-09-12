@@ -62,8 +62,10 @@ def check_bio_features(request):
 def check_login(request):
     try:
         build_file = os.path.join(settings.BASE_DIR, 'build')
-        with open(build_file, 'r') as content_file:
-            build = "-".join(content_file.read().split('-')[2:])[1:]
+        build = "0"
+        if os.path.exists(build_file) and os.path.isfile(build_file):
+            with open(build_file, 'r') as content_file:
+                build = content_file.read()
         version = command.__version__ + "." + build
         user = request.user
         current_compendium = {'id': None, 'compendium_name': None, 'compendium_nick_name': None}
