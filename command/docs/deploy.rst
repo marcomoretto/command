@@ -25,7 +25,7 @@ Assuming that you have `Docker Compose correctly installed <https://docs.docker.
 .. code-block:: bash
 
    # 1. clone the repository
-   git clone
+   git clone https://github.com/marcomoretto/command.git
 
    # 2. build
    docker-compose build
