@@ -46,8 +46,8 @@ Main features are.
 Contribute
 ==========
 
-- Issue Tracker:
-- Source Code:
+- Issue Tracker: https://github.com/marcomoretto/command/issues
+- Source Code: https://github.com/marcomoretto/command
 
 Support
 =======
@@ -57,4 +57,4 @@ If you are having issues, please let me know at marco.moretto@fmach.it
 License
 =======
 
-The project is licensed under the GPLv3 license.
+The project is licensed under the `GPLv3 license <https://www.gnu.org/licenses/gpl-3.0.html>`_.
