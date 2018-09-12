@@ -3,6 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
+.. |email| image:: _static/email.png
+
+
 Welcome to COMMAND>_'s documentation!
 =====================================
 
@@ -43,16 +47,15 @@ Main features are.
    for_developers
 
 
-Contribute
-==========
+Contribute & Support
+====================
 
-- Issue Tracker: https://github.com/marcomoretto/command/issues
-- Source Code: https://github.com/marcomoretto/command
+Use the `GitHub Push Request and/or Issue Tracker <https://github.com/marcomoretto/command>`_.
 
-Support
-=======
+Author
+======
 
-If you are having issues, please let me know at marco.moretto@fmach.it
+To send me an e-mail about anything else related to COMMAND>_ write to |email|
 
 License
 =======
