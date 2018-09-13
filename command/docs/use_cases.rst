@@ -25,10 +25,10 @@ We start by selecting Experiments from Data collection (top left corner) then we
 Parse Experiment, Platform and Samples
 ++++++++++++++++++++++++++++++++++++++
 
-Since we have a new platform (`GPL90 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL90>`_) never imported before into COMMAND>_ for this compendium, we get the gene sequences from The Affymetrix website.
+Since we have a new platform (`GPL90 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL90>`_) never imported before into COMMAND>_ for this compendium, we retrieve the :download:`gene sequences <YG_S98.probe_tab>` for this platform from The Affymetrix website ()
 
 .. Note::
-   Once time procedure: from now on the user can use this platform for all related experiments.
+   Thi is a once time procedure: from now on we can use this platform for all related experiments.
 
 Now that the Platform is imported we go back to Experiments and start to parse the selected one clicking Parse/Import experiment from the bottom bar.
 On the main window you can see that the Experiment tab is populated with metadata gathered from the publicDB (GEO here).
