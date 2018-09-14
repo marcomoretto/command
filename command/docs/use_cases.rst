@@ -86,7 +86,7 @@ Now we parse the Affymetrix cel files (sample files):
 .. figure::  _static/Case01_03d.png
    :align:   center
 
-Finally, in the Sample tab of the main interface click Run Selected (bottom-right corner). After a while  your samples will be parsed.
+Finally, in the Preview Section (`Preview of GSE8536` here) click Run Selected (bottom-right corner). After a while  your samples will be parsed.
 
 
 Now you can Import both the Platform (since is the first time we use this specific one) and the Experiment.
@@ -96,6 +96,10 @@ Now you can Import both the Platform (since is the first time we use this specif
 
 
 Click the Import button on the bottom-right corner and select Import whole experiment. After a while the experiment will be imported.
+
+.. _Case01_04:
+.. figure::  _static/Case01_04.png
+   :align:   center
 
 
 Use Case - Nimblegen from ArrayExpress
@@ -161,12 +165,14 @@ Parse Platforms and Samples
 In order to parse the two platforms, we need both the soft file related to the experiment and the soft_platform.py script. 
 
 In Experiment files Section > File Assignement > Select the GSE13713_family.soft file and on the Assign files dialog:
+
 - Script: `match_all.py`
 - Param: platform
 - Only selected files checked
 - Platform tab > Script: > `soft_platform.py`, parameters: True, Execution order: 1
 
 In Experiment files Section > File Assignement > Select the .txt files (all Sultana in the Filter field) and on the Assign files dialog:
+
 - Script: `match_entitye_name.py`
 - Parameters: ch1
 - Only selected files checked
@@ -177,7 +183,6 @@ Platform tab > Script: > `gpr_sample.py`; parameters: Gene name,Spot Mean Intens
 DO the same again for the ch2 but use as Parameters for Platform:
 
 Platform tab > Script: > `gpr_sample.py`; parameters: Gene name,Spot Mean Intensity (Cyanine3_060909_1136(1)),0; Execution; order: 2
-
 
 for GPL10439:
 
