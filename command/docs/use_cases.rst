@@ -75,19 +75,6 @@ Now we associate the file to the platform:
   - The parsing of the Platform is a once time procedure: from now on we can use this platform for all related experiments.
 
 Now we parse the Affymetrix cel files (sample files):
-<<<<<<< HEAD
-=======
-
-- In Experiment files Section > File Assignment  we use CEL as filter and select all files > click the `Use assignment script to assign files to experiment entities` icon on the bottom-right corner and the Assign files and scripts to experiment structure dialog will pop-up:
-- Script > match_entity_name.py 
-- Only selected files (default) checked
-- Sample tab > Script: `cell_sample.py`, Execution order: 2
-- Run assignment script
-
-.. _Case01_03d:
-.. figure::  _static/Case01_03d.png
-   :align:   center
->>>>>>> b853ae6942aef3de10916d294e27169e30b8d621
 
 - In Experiment files Section > File Assignment  we use CEL as filter and select all files > click the `Use assignment script to assign files to experiment entities` icon on the bottom-right corner and the Assign files and scripts to experiment structure dialog will pop-up:
 - Script > match_entity_name.py 
