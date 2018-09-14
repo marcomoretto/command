@@ -25,7 +25,7 @@ We start by selecting Experiments from Data collection (top left corner) then we
 Parse Experiment, Platform and Samples
 ++++++++++++++++++++++++++++++++++++++
 
-Since we have a new platform (`GPL90 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL90>`_) never imported before into COMMAND>_ for this compendium,  we retrieve the sequences associated to the Affymetrix probe ids ( :download:`YG_S98 probes <YG_S98.probe_tab>` ) for this platform from the `Affymetrix Support sitewebsite <http://www.affymetrix.com/support/technical/byproduct.affx?product=yeast>`_. 
+Since we have a new platform (`GPL90 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL90>`_) never imported before into COMMAND>_ for this compendium,  we retrieve the sequences associated to the Affymetrix probe ids (:download:`YG_S98 probes <YG_S98.probe_tab>`) for this platform from the `Affymetrix Support sitewebsite <http://www.affymetrix.com/support/technical/byproduct.affx?product=yeast>`_. 
 
 From Experiments (Data collection Menu) we highlight the selected experiment (GSE8536 here) and click the Parse/Import experiment from the bottom bar.
 On the main window you can see that the Experiment tab is populated with metadata gathered from the publicDB (GEO here).
@@ -92,10 +92,9 @@ Finally, in the Preview Section (`Preview of GSE8536` here) click Run Selected (
 Now you can Import both the Platform (since is the first time we use this specific one) and the Experiment.
 
 .. Tip::
-   check that both the platform and the samples are properly parsed from the Preview interface of the Parse Experiment section clicking on the platform and on each sample.
+   Check that both the platform and the samples are properly parsed from the Preview interface of the Parse Experiment section clicking on the platform and on each sample.
 
-
-Click the Import button on the bottom-right corner and select Import whole experiment. After a while the experiment will be imported.
+Click the Import button on the bottom-right corner and select Import whole experiment. After a while the experiment and the platform (in this case) will be imported.
 
 .. _Case01_04:
 .. figure::  _static/Case01_04.png
@@ -261,10 +260,10 @@ After a while all the sample will be preprocessed and summarized and the experim
 Mapping probes and export the gene expression matrix
 ====================================================
 
-If you are done with importing experiments you can now map the probes to genes using the blast and a double filtering GUI of  COMMAND>_.
-Go to Platform, select the platform to be mapped (e.g. here GPL90) and click the chain icon (map platform to biological features) on the bottom left corner.
+If you are done with importing experiments you can now map the probes to genes using BLAST [#f2]_ and a double filtering GUI of COMMAND>_.
+Go to Platform, select the platform to be mapped (e.g. GPL90 from the Affymetrix Use Case) and click the chain icon (map platform to biological features) on the bottom left corner.
 
-Now you can use the dialog to run blast and filtered the data (here we use the default settings.)
+Now you can use the dialog to run BLAST and filter the data (here we use the default settings).
 
 When your are fine with filtering you can use one of the selected filtered objects and download the expression matrix going to Options > Export.
 
@@ -282,3 +281,4 @@ When your are fine with filtering you can use one of the selected filtered objec
 .. rubric:: References
 
 .. [#f1] Nicolas L Bray, Harold Pimentel, Páll Melsted and Lior Pachter, Near-optimal probabilistic RNA-seq quantification, Nature Biotechnology 34, 525–527 (2016), doi:10.1038/nbt.3519
+.. [#f2] Altschul, S.F., Gish, W., Miller, W., Myers, E.W. & Lipman, D.J. (1990) "Basic local alignment search tool." J. Mol. Biol. 215:403-410.
