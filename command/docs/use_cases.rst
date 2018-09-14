@@ -158,6 +158,10 @@ Import Gene Annotation
 Since the platforms related to the selected experiment were never imported before into  COMMAND>_, we need the gene sequences in order to properly import our probes at gene level. We got gene/sequence list from ncbi: go `here <https://www.ncbi.nlm.nih.gov/nuccore/AP007209.1>`_ and from the top-right button select send to: Coding sequences, Format: FASTA Nucleotide and Choose destination: File. 
 In COMMAND>_ go to > Data Collection (on the top left corner) then > Bio features (genes) > Import biological feature (+ symbol on the bottom left) > Type: FASTA , File name: select the annotation file you downloaded before > Import Biological features.
 
+.. _Case03_01:
+.. figure::  _static/Case03_01.png
+   :align:   center
+
 Parse Platforms and Samples
 +++++++++++++++++++++++++++
 
@@ -176,14 +180,21 @@ In Experiment files Section > File Assignement > Select the .txt files (all Sult
 - Parameters: ch1
 - Only selected files checked
 
-Platform tab > Script: > `gpr_sample.py`; parameters: Gene name,Spot Mean Intensity (Cyanine5_060909_1136(1)),0; Execution; order: 2
+Platform tab
 
+- Script: `gpr_sample.py`
+- parameters: Gene name,Spot Mean Intensity (Cyanine5_060909_1136(1)),0
+- Execution order: 2
 
-DO the same again for the ch2 but use as Parameters for Platform:
+Do the same again for the ch2 but use as Parameters for Platform:
 
-Platform tab > Script: > `gpr_sample.py`; parameters: Gene name,Spot Mean Intensity (Cyanine3_060909_1136(1)),0; Execution; order: 2
+Platform tab 
 
-for GPL10439:
+- Script: `gpr_sample.py`
+- parameters: Gene name,Spot Mean Intensity (Cyanine3_060909_1136(1)),0
+- Execution order: 2
+
+for Platform GPL10439:
 
 - In Experiment files Section > File Assignement > Select the .ndf file and on the Assign files dialog":
 
