@@ -25,12 +25,9 @@ We start by selecting Experiments from Data collection (top left corner) then we
 Parse Experiment, Platform and Samples
 ++++++++++++++++++++++++++++++++++++++
 
-Since we have a new platform (`GPL90 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL90>`_) never imported before into COMMAND>_ for this compendium, we retrieve the :download:`gene sequences <YG_S98.probe_tab>` for this platform from The Affymetrix website ()
+Since we have a new platform (`GPL90 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL90>`_) never imported before into COMMAND>_ for this compendium, we retrieve the :download:`gene sequences <YG_S98.probe_tab>` for this platform from the `Affymetrix Support sitewebsite <http://www.affymetrix.com/support/technical/byproduct.affx?product=yeast>`_. 
 
-.. Note::
-   Thi is a once time procedure: from now on we can use this platform for all related experiments.
-
-Now that the Platform is imported we go back to Experiments and start to parse the selected one clicking Parse/Import experiment from the bottom bar.
+From Experiments (Data collection Menu) we highlight the selected experiment (GSE8536 here) and click the Parse/Import experiment from the bottom bar.
 On the main window you can see that the Experiment tab is populated with metadata gathered from the publicDB (GEO here).
 Now we can start parsing the Experiment, the Platform(s) and the Samples.
 
@@ -51,7 +48,7 @@ Select GSE8536_family.soft and click the 'Use assignment script to assign files 
 - Sample tab > Script: > soft_sample.py, Execution order: 1
 - Run assignment script
 
-In order to map properly the probes to genes we need to retrieve the sequences associated to the Affymetrix probe ids for Yeast. We’ll use this file downloaded from the Affymetrix Support site. We import the annotation in the File assignment section of Experiment files clicking the upload icon on the bottom of the page. 
+In order to map properly the probes to genes we need to retrieve the sequences associated to the Affymetrix probe ids for Yeast. We’ll use this file downloaded from the `Affymetrix Support site <http://www.affymetrix.com/support/technical/byproduct.affx?product=yeast>`_. We import the annotation in the File assignment section of Experiment files clicking the upload icon on the bottom of the page. 
 
 Now we associate the file to the platform:
 - In Experiment files Section > File Assignment > Select the uploaded  file and on the Assign files dialog:
@@ -60,7 +57,11 @@ Now we associate the file to the platform:
 - Only selected files checked  (default)
 - Platform tab > Script: > gpr_platform.py ;  Parameters: 0,Probe X|Probe Y,Probe Sequence ; Execution order: 2
 - Run assignment script
+
 Note: the Parameters assigned to the gpr_platform.py script specify to not skip any line, use the combination of Probe X and Probe Y columns to create an unique id for the cel files and indicate the sequences for the probes are in the Probe Sequence column.
+
+.. Note::
+   Thi is a once time procedure: from now on we can use this platform for all related experiments.
 
 Now we parse the Affymetrix cel files (sample files):
 - In Experiment Files Section  we use as filter CEL and select all files >  click the 'Use assignment script to assign files to experiment entities' icon on the bottom-right corner and the Assign files and scripts to experiment structure dialog will pop-up:
