@@ -21,6 +21,7 @@ from command.lib.views.message_log import MessageLogView
 from command.lib.views.parse_experiment import ParseExperimentView
 from command.lib.views.platforms import PlatformView, MicroarrayPlatformView
 from command.lib.views.script_tree_view import ScriptTreeView
+from command.lib.views.test import TestView
 from command.lib.views.user_group_manager import UserGroupManagerView
 
 
@@ -42,7 +43,8 @@ class Dispatcher:
         FileAssignmentView: ['file_assignment_list', 'file_assignment', 'experiment_file_assignment',
                              'platform_file_assignment', 'sample_file_assignment'],
         MessageLogView: ['message_log'],
-        ExportDataView: ['export_data']
+        ExportDataView: ['export_data'],
+        TestView: ['test']
     }
 
     @staticmethod

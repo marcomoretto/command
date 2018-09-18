@@ -34,6 +34,7 @@ Ext.define('command.Application', {
     version: null,
 
     panel_glyph: {
+        'test': 'xf11b',
         'parse_experiment': 'xf120',
         'import_experiment_public': 'xf0c3',
         'compendia_manager': 'xf00a',

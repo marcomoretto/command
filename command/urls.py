@@ -29,6 +29,7 @@ from command.lib.views.message_log import MessageLogView
 from command.lib.views.parse_experiment import ParseExperimentView
 from command.lib.views.platforms import PlatformView, MicroarrayPlatformView
 from command.lib.views.script_tree_view import ScriptTreeView
+from command.lib.views.test import TestView
 from command.lib.views.user_group_manager import UserGroupManagerView
 
 urlpatterns = [
@@ -61,4 +62,6 @@ urlpatterns = [
     url(r'^export_data/(?P<operation>\w+)$', ExportDataView.as_view(), name='export_data'),
     url(r'^microarray_platforms/(?P<operation>\w+)$', MicroarrayPlatformView.as_view(), name='microarray_platforms'),
     url(r'^check_bio_features/$', views.check_bio_features, name='check_bio_features'),
+
+    url(r'^test/(?P<operation>\w+)$', TestView.as_view(), name='test'),
 ]

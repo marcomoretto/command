@@ -98,6 +98,19 @@ Ext.define('command.view.main.Main', {
                     }]
             }
         },{
+            text: 'Test',
+            itemId: 'test_menu_item',
+            iconCls: null,
+            glyph: 'xf11b',
+            listeners: {
+                click: {
+                    fn: 'onAction',
+                    hash: 'view/test',
+                    glyph: 'xf11b',
+                    panel: 'test'
+                }
+            }
+        },{
             text: 'Options',
             iconCls: null,
             glyph: 'xf0ca',

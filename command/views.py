@@ -114,3 +114,7 @@ def check_login(request):
             'is_admin': False,
             'views': []
         }), content_type="application/json")
+
+
+def test(request):
+    return HttpResponse(json.dumps({'test': True}), content_type="application/json")
