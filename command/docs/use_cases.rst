@@ -110,7 +110,7 @@ On the main window you can see that the Experiment tab is populated with metadat
 Import Platform from GEO
 ++++++++++++++++++++++++
 
-COMMAND>_can use a previous imported platform from a different public database (either from ArrayExpress or GEO)  and assign it as Reporter platform (in the preview main section of Parsing) for the current experiment. 
+COMMAND>_can use a previous imported platform from a different public database (either ArrayExpress or GEO) and assign it as Reporter platform (in the preview main section of Parsing) for the current experiment. 
 In our case we want to parse and import an experiment from ArrayExpress using the previously imported platform from GEO.
 In order to do so we import the platform only for another experiment (here `GSE32561 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE32561>`_) which uses the same platform of the experiment of interest.
 After the selection of the new experiment using the Searching from public db procedure we use the Nimblegen ndf files which allows to associate probes to sequences to the platform GPL14649.
@@ -137,7 +137,7 @@ Parse Experiment, Platform and Samples
 ++++++++++++++++++++++++++++++++++++++
 
 Now the Platform is available and can be used to import the experiment retrieved from ArrayExpress.
-- Experiments >  Parse Experiment EGEOD-58806 > Experiment Files > Platform and now click over A-GEOD-14649 in the Reporer Platform field and selected the previously imported GPL14649.
+- Experiments >  Parse Experiment EGEOD-58806 > Experiment Files > Platform and now click over A-GEOD-14649 in the Reporter Platform field and selected the previously imported GPL14649.
 
 In order to parse the nimblegen .pair files:
 
@@ -226,8 +226,29 @@ Use Case - Import experiment from local file
 
 In order to import an experiment which is not available from public repositories the user needs to provide:
 
-- a yaml file containing the description of the experiment to be imported (see this example).
-- a data matrix with the first row containing the sample names, the first columns containing the gene_ids and the rest of the columns containing raw gene expression values one for each sample.
+- a yaml file (see an example: :download:`here <experiment_example.yaml>`) containing the description of the experiment to be imported:
+  The first row contains the Experiment id, the other rows start with the Platform id followed by the Samples ids.
+- a single compressed file (either zip or tar.gz) containing the raw data.
+
+Go to Experiments > New Experiment (bottom-left) > From local file
+
+.. _local_01:
+.. figure::  _static/local_01.png
+   :align:   center
+
+Fill the form which popped up starting with Experiment ID (the same contained in the yaml file, GSE13713 for the embedded example) then upload the yaml file (the system will take care to check if the format is ok), finally upload the compressed data. In a while your experiment is going to be imported.
+
+.. _local_02:
+.. figure::  _static/local_02.png
+   :align:   center
+
+.. _local_03:
+.. figure::  _static/local_03.png
+   :align:   center
+
+.. _local_04:
+.. figure::  _static/local_04.png
+   :align:   center
 
 
 Use Case - RNA-Seq
