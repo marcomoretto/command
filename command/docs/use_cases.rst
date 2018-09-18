@@ -104,45 +104,50 @@ Click the Import button on the bottom-right corner and select Import whole exper
 Use Case - Nimblegen from ArrayExpress
 --------------------------------------
 
-In COMMAND>_ the preferred  way to import experiments from public db is by using GEO which provide the most convenient interface out-of-the-box. In case an experiment is not included in GEO it is possible to import it from ArrayExpress. Start by searching the experiment of interest following the procedure described in :ref:`search_database`, select `E-EGEOD-58806 <https://www.ebi.ac.uk/arrayexpress/experiments/E-GEOD-58806/>`_ as Term and ArrayExpress as Database. Go the experiment slide on the left, select the experiment of interest (here `E-EGEOD-58806 <https://www.ebi.ac.uk/arrayexpress/experiments/E-GEOD-58806/>`_ ) and click >_ Parse/Import experiment.
-On the main window you can see that the Experiment tab is populated with metadata gathered from the publicDB (ArrayExpress here).
+In COMMAND>_ the preferred  way to import experiments from public db is by using GEO which provide the most convenient interface out-of-the-box. In case an experiment is not included in GEO it is possible to import it from ArrayExpress. Start by searching the experiment of interest following the procedure described in :ref:`search_database`, select `E-GEOD-58806 <https://www.ebi.ac.uk/arrayexpress/experiments/E-GEOD-58806/>`_ as Term and ArrayExpress as Database. Go the experiment slide on the left, select the experiment of interest (here `E-GEOD-58806 <https://www.ebi.ac.uk/arrayexpress/experiments/E-GEOD-58806/>`_ ) and click >_ Parse/Import experiment. On the main window you can see that the Experiment tab is populated with metadata gathered from the publicDB (ArrayExpress here).
 
 Import Platform from GEO
 ++++++++++++++++++++++++
 
-COMMAND>_can use a previous imported platform from a different public database (either ArrayExpress or GEO) and assign it as Reporter platform (in the preview main section of Parsing) for the current experiment. 
-In our case we want to parse and import an experiment from ArrayExpress using the previously imported platform from GEO.
-In order to do so we import the platform only for another experiment (here `GSE32561 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE32561>`_) which uses the same platform of the experiment of interest.
+COMMAND>_can use a previous imported platform from a different public database (either ArrayExpress or GEO) and assign it as Reporter platform (in the preview main section of Parsing) for the current experiment.
+
+In our case we want to parse and import an experiment from ArrayExpress using a previously imported platform from GEO.
+In order to do so we import ONLY the platform for another experiment (here `GSE32561 <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE32561>`_) which uses the same platform of the experiment of interest.
 After the selection of the new experiment using the Searching from public db procedure we use the Nimblegen ndf files which allows to associate probes to sequences to the platform GPL14649.
 
-- Experiment files  > File Assignment > Select GPL14649_071112_Ecoli_K12_EXP.ndf and in the  Assign files dialog:
-- Script: match_entity_type_param.py
+Experiment files > File Assignment > Select `GPL14649_071112_Ecoli_K12_EXP.ndf` and in the  Assign files dialog:
+
+- Script: match_entity_name.py
 - Param: platform
 - Only selected files checked  (default)
 - Platform tab > Script: > gpr_platform.py;  Parameters: 0,X|Y,PROBE_ID; Execution order: 2
 - Run assignment script
 
-
-.. _Case02_04:
-.. figure::  _static/Case02_04.png
+.. _Case02_01:
+.. figure::  _static/Case02_01.png
    :align:   center
 
-.. _Case02_05:
-.. figure::  _static/Case02_05.png
+Now we can import this platform from the Platform section of Preview:
+
+.. _Case02_02:
+.. figure::  _static/Case02_02.png
    :align:   center
 
-Now we can import the platform only from the Platform section of Preview:
 
 Parse Experiment, Platform and Samples
 ++++++++++++++++++++++++++++++++++++++
 
 Now the Platform is available and can be used to import the experiment retrieved from ArrayExpress.
-- Experiments >  Parse Experiment EGEOD-58806 > Experiment Files > Platform and now click over A-GEOD-14649 in the Reporter Platform field and selected the previously imported GPL14649.
+Go to Experiments >  Parse Experiment E-GEOD-58806 > Experiment Files > Platform and now click over A-GEOD-14649 in the Reporter Platform field and selected the previously imported GPL14649.
 
-In order to parse the nimblegen .pair files:
+.. _Case02_03:
+.. figure::  _static/Case02_03.png
+   :align:   center
+
+Finally you parse and import the nimblegen .pair files:
 
 - In Experiment files Section > File Assignment > Filter .pair and select all  files
-- click the 'Use assignment script to assign files to experiment entities' icon on the bottom-right and the Assign files and scripts to experiment structure dialog will pop-up:
+- click the `Use assignment script to assign files to experiment entities` icon on the bottom-right and the Assign files and scripts to experiment structure dialog will pop-up:
 - Script: `match_sample_name.py` > Only selected files
 - Sample: Script: > `pair_sample.py`, Execution order: 2
 - Run assignment script
@@ -254,7 +259,7 @@ Fill the form which popped up starting with Experiment ID (the same contained in
 Use Case - RNA-Seq
 ------------------
 
-Similarly to the microarray case, RNA-Seq experiments can be retrieved from public database, specifically the `Sequence Read Archive (SRA) <https://www.ncbi.nlm.nih.gov/sra>`_ , from the New Experiment/From public DB interface (bottom-left border icon). 
+Similarly to the microarray cases, RNA-Seq experiments can be retrieved from public database, specifically the `Sequence Read Archive (SRA) <https://www.ncbi.nlm.nih.gov/sra>`_ , from the New Experiment/From public DB interface (bottom-left border icon). 
 Here we select a small RNA-Seq experiment from SRA (`PRJNA471071 <https://www.ncbi.nlm.nih.gov/bioproject/PRJNA471071>`_) where the authors employed a computational model of underground metabolism and laboratory evolution experiments to examine the role of enzyme promiscuity in the acquisition and optimization of growth on predicted non-native substrates in E. coli K-12 MG1655. 
 
 .. _CaseRNASeq_01:
