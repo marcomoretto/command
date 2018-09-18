@@ -140,11 +140,12 @@ Now the Platform is available and can be used to import the experiment retrieved
 - Experiments >  Parse Experiment EGEOD-58806 > Experiment Files > Platform and now click over A-GEOD-14649 in the Reporer Platform field and selected the previously imported GPL14649.
 
 In order to parse the nimblegen .pair files:
+
 - In Experiment files Section > File Assignment > Filter .pair and select all  files
 - click the 'Use assignment script to assign files to experiment entities' icon on the bottom-right and the Assign files and scripts to experiment structure dialog will pop-up:
-- Script > `match_sample_name.py` > Only selected files
-- Sample > Script: > `pair_sample.py`, Execution order: 2
-- > Run assignment script
+- Script: `match_sample_name.py` > Only selected files
+- Sample: Script: > `pair_sample.py`, Execution order: 2
+- Run assignment script
 
 
 Use Case - Multiplatform Experiment
@@ -225,7 +226,7 @@ Use Case - Import experiment from local file
 
 In order to import an experiment which is not available from public repositories the user needs to provide:
 
-- a yaml file containing the descritption of the experiment to be imported;
+- a yaml file containing the description of the experiment to be imported (see this example).
 - a data matrix with the first row containing the sample names, the first columns containing the gene_ids and the rest of the columns containing raw gene expression values one for each sample.
 
 
