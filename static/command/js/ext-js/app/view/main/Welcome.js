@@ -9,10 +9,12 @@ Ext.define('command.view.welcome.Welcome', {
         xtype: 'panel',
         margin: '10 500 30 100',
         html: '<h1>Hi there,</h1>' +
-        '<h4>This is COMMAND the COMpendia MANagement Desktop ... We still need to properly write this part ' +
-        'but you can find all the documentation you need at this link. The GitHub repository is here and you ' +
-        'might want to start selecting a Compendium from the Option menu and then clicking on the Data ' +
-        'Collection menu. </br>Live long and prosper!</h4>',
+        '<h4>This is COMMAND (COMpendia MANagement Desktop) a web-based application used to download, collect ' +
+        'and manage gene expression data from public databases.<br><br>' +
+        'The GitHub repository is <a href="https://github.com/marcomoretto/command">here</a> while the documentation ' +
+        'is hosted on <a href="https://command.readthedocs.io">ReadTheDocs</a>.<br><br>' +
+        'You might want to start selecting a Compendium from the Option menu and then clicking on the Data ' +
+        'Collection menu. <br><br>Live long and prosper!</h4>',
         layout: 'fit'
     }],
 
