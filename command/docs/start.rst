@@ -4,10 +4,15 @@ Getting start with COMMAND>_
 Getting my user id and password
 -------------------------------
 
-You can log in to COMMAND>_ using:
+If you are using the public COMMAND>_ instance on https://command.fmach.it:4242 you can login using:
 
    - username: ``guest``
    - password: ``demo``
+
+This is a user with restricted privileges meant for demonstration purpose only. If you have your running instance of COMMAND>_ (see :doc:`deploy`) you will be able to first login using:
+
+   - username: ``admin``
+   - password: ``admin``
 
 Now you can change the admin password, create new users and assign them privileges following the instructions in :doc:`admin_user`.
 
