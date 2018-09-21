@@ -43,7 +43,12 @@ def check_permission(perm_codename):
             request = args[0]
             if request.user.is_staff and request.user.is_superuser:
                 return func(*args, **kwargs)
-            comp_id = request.POST['compendium_id']
+            comp_id = None
+            if 'request' in request.POST:
+                req = json.loads(request.POST['request'])
+                comp_id = req['compendium_id']
+            elif 'compendium_id' in request.POST:
+                comp_id = request.POST['compendium_id']
             compendium = CompendiumDatabase.objects.get(id=comp_id)
             for g in request.user.groups.all():
                 for p in g.permissions.all():
