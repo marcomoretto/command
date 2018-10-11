@@ -98,6 +98,113 @@ Ext.define('command.view.main.Main', {
                     }]
             }
         },{
+            text: 'Annotation',
+            itemId: 'annotation_menu_item',
+            iconCls: null,
+            glyph: 'xf02b',
+            menu: {
+                items: [{
+                    text: 'Biological features',
+                    glyph: 'xf06c',
+                    iconCls: null,
+                    displayText: 'Biological features',
+                    /*listeners: {
+                        click: {
+                            fn: 'onAction',
+                            hash: 'view/message_log',
+                            glyph: 'f086',
+                            panel: 'message_log'
+                        }
+                    }*/
+                }, {
+                    text: 'Samples',
+                    glyph: 'f1fb',
+                    iconCls: null,
+                    displayText: 'Samples',
+                    /*listeners: {
+                        click: {
+                            fn: 'onAction',
+                            hash: 'view/message_log',
+                            glyph: 'f086',
+                            panel: 'message_log'
+                        }
+                    }*/
+                }, '-', {
+                    text: 'Ontologies',
+                    glyph: 'f0e8',
+                    iconCls: null,
+                    displayText: 'Ontologies',
+                    listeners: {
+                        click: {
+                            fn: 'onAction',
+                            hash: 'view/ontologies',
+                            glyph: 'f0e8',
+                            panel: 'ontologies'
+                        }
+                    }
+                }]
+            }
+        },{
+            text: 'Normalization',
+            itemId: 'normalization_menu_item',
+            iconCls: null,
+            glyph: 'f1fe',
+            menu: {
+                items: [{
+                    text: 'Normalize data',
+                    glyph: 'f080',
+                    iconCls: null,
+                    displayText: 'Normalize data',
+                    /*listeners: {
+                     click: {
+                     fn: 'onAction',
+                     hash: 'view/message_log',
+                     glyph: 'f086',
+                     panel: 'message_log'
+                     }
+                     }*/
+                }, {
+                    text: 'Define experimental conditions',
+                    glyph: 'f0e7',
+                    iconCls: null,
+                    displayText: 'Biological features',
+                    /*listeners: {
+                     click: {
+                     fn: 'onAction',
+                     hash: 'view/message_log',
+                     glyph: 'f086',
+                     panel: 'message_log'
+                     }
+                     }*/
+                }, '-', {
+                    text: 'Jupyter notebook',
+                    glyph: 'f12b',
+                    iconCls: null,
+                    displayText: 'Jupyter notebook',
+                    listeners: {
+                        click: {
+                            fn: 'onAction',
+                            hash: 'view/jupyter_notebook',
+                            glyph: 'f12b',
+                            panel: 'jupyter_notebook'
+}
+                     }
+                }, '-', {
+                    text: 'Publish',
+                    glyph: 'f135',
+                    iconCls: null,
+                    displayText: 'Publish',
+                    /*listeners: {
+                     click: {
+                     fn: 'onAction',
+                     hash: 'view/message_log',
+                     glyph: 'f086',
+                     panel: 'message_log'
+                     }
+                     }*/
+                }]
+            }
+        },/*{
             text: 'Test',
             itemId: 'test_menu_item',
             iconCls: null,
@@ -110,7 +217,7 @@ Ext.define('command.view.main.Main', {
                     panel: 'test'
                 }
             }
-        },{
+        },*/{
             text: 'Options',
             iconCls: null,
             glyph: 'xf0ca',

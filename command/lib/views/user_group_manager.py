@@ -1,5 +1,7 @@
 import json
+from urllib.parse import urlparse
 
+import requests
 from channels import Channel, Group
 from django.contrib.auth.models import Group as UserGroup
 from django.contrib.auth.models import User
@@ -8,6 +10,7 @@ from django.http import HttpResponse
 from django.views import View
 
 import command.consumers
+from command.lib.db.admin.admin_options import AdminOptions
 from command.lib.db.admin.compendium_database import CompendiumDatabase
 from command.lib.utils.decorators import forward_exception_to_http, forward_exception_to_channel
 
@@ -149,6 +152,20 @@ class UserGroupManagerView(View):
                             content_type="application/json")
 
     @staticmethod
+    def _create_jhub_user(username):
+        su_token = '0f226172c03b48a791cff12dac6012e5'
+        jhub_ip = AdminOptions.objects.get(option_name='jhub_ip').option_value
+        # create user
+        api_url = jhub_ip + '/hub/api'
+        r = requests.post(api_url + '/users/' + username,
+            headers={
+                'Authorization': 'token %s' % su_token
+            }
+        )
+        r.raise_for_status()
+
+
+    @staticmethod
     @forward_exception_to_http
     def create_user(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
@@ -171,6 +188,8 @@ class UserGroupManagerView(View):
             else:
                 group = UserGroup.objects.get(id=values['group_id'])
                 group.user_set.add(new_user)
+
+        UserGroupManagerView._create_jhub_user(new_user.username)
 
         Group('admin').send({
             'text': json.dumps({

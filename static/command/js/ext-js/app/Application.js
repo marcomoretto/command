@@ -34,6 +34,8 @@ Ext.define('command.Application', {
     version: null,
 
     panel_glyph: {
+        'jupyter_notebook': 'f12b',
+        'ontologies': 'xf0e8',
         'test': 'xf11b',
         'parse_experiment': 'xf120',
         'import_experiment_public': 'xf0c3',
@@ -701,7 +703,6 @@ Ext.define('command.Grid', {
         },
         render: function(grid) {
             var view=grid.getView();
-            console.log(view.id);
             view.tip = Ext.create('Ext.tip.ToolTip', {
                 dismissDelay: 0,
                 target: grid.el,

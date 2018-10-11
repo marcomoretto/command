@@ -166,3 +166,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+JUPYTER_TOKEN = os.environ['JUPYTER_TOKEN']

@@ -25,7 +25,9 @@ from command.lib.views.experiment_public import ExperimentPublicView
 from command.lib.views.experiments import ExperimentView
 from command.lib.views.export_data import ExportDataView
 from command.lib.views.file_assignment import FileAssignmentView
+from command.lib.views.jupyter_notebook import JupyterNotebookView
 from command.lib.views.message_log import MessageLogView
+from command.lib.views.ontologies import OntologiesView
 from command.lib.views.parse_experiment import ParseExperimentView
 from command.lib.views.platforms import PlatformView, MicroarrayPlatformView
 from command.lib.views.script_tree_view import ScriptTreeView
@@ -62,6 +64,8 @@ urlpatterns = [
     url(r'^export_data/(?P<operation>\w+)$', ExportDataView.as_view(), name='export_data'),
     url(r'^microarray_platforms/(?P<operation>\w+)$', MicroarrayPlatformView.as_view(), name='microarray_platforms'),
     url(r'^check_bio_features/$', views.check_bio_features, name='check_bio_features'),
+    url(r'^ontologies/(?P<operation>\w+)$', OntologiesView.as_view(), name='ontologies'),
+    url(r'^jupyter_notebook/(?P<operation>\w+)$', JupyterNotebookView.as_view(), name='jupyter_notebook'),
 
     url(r'^test/(?P<operation>\w+)$', TestView.as_view(), name='test'),
 ]

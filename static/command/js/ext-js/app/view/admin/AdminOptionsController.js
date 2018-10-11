@@ -58,6 +58,32 @@ Ext.define('command.view.admin.AdminOptionsController', {
         })
     },
 
+    onCheckJupyterNotebook: function ( b ) {
+        var panel = b.up('#admin_options');
+        var values = b.up('form').getForm().getValues();
+        var request = panel.getRequestObject('update_admin_option_jupyter_notebook_ip');
+        request.values = JSON.stringify(values);
+        Ext.Ajax.request({
+            url: request.view + '/' + request.operation,
+            params: request,
+            success: function (response) {
+                if (command.current.checkHttpResponse(response)) {
+                    Ext.MessageBox.show({
+                        title: 'JupyterHub server changed',
+                        msg: 'JupyterHub server changed successfully',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.INFO,
+                        fn: function () {
+                        }
+                    });
+                }
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+            }
+        });
+    },
+
     onCheckDirectory: function(b) {
         var panel = b.up('#admin_options');
         var values = b.up('form').getForm().getValues();

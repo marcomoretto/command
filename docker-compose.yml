@@ -123,6 +123,26 @@ services:
       static-network:
         ipv4_address: 172.22.0.9
 
+  jupyter:
+    build:
+      context: .
+      dockerfile: jupyter.Dockerfile
+    ports:
+      - "8888:8888"
+    volumes_from:
+      - web
+    links:
+      - web:web
+      - postgres:postgres
+    env_file: env
+    volumes_from:
+      - web_data
+    volumes:
+      - .:/app
+    networks:
+      static-network:
+        ipv4_address: 172.22.0.10
+
   pg_data:
     restart: always
     image: alpine

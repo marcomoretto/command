@@ -17,7 +17,9 @@ from command.lib.views.experiment_public import ExperimentPublicView
 from command.lib.views.experiments import ExperimentView
 from command.lib.views.export_data import ExportDataView
 from command.lib.views.file_assignment import FileAssignmentView
+from command.lib.views.jupyter_notebook import JupyterNotebookView
 from command.lib.views.message_log import MessageLogView
+from command.lib.views.ontologies import OntologiesView
 from command.lib.views.parse_experiment import ParseExperimentView
 from command.lib.views.platforms import PlatformView, MicroarrayPlatformView
 from command.lib.views.script_tree_view import ScriptTreeView
@@ -44,7 +46,9 @@ class Dispatcher:
                              'platform_file_assignment', 'sample_file_assignment'],
         MessageLogView: ['message_log'],
         ExportDataView: ['export_data'],
-        TestView: ['test']
+        TestView: ['test'],
+        OntologiesView: ['ontologies'],
+        JupyterNotebookView: ['jupyter_notebook', 'notebook_tree']
     }
 
     @staticmethod
