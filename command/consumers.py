@@ -47,7 +47,7 @@ class Dispatcher:
         MessageLogView: ['message_log'],
         ExportDataView: ['export_data'],
         TestView: ['test'],
-        OntologiesView: ['ontologies'],
+        OntologiesView: ['ontologies', 'view_ontology'],
         JupyterNotebookView: ['jupyter_notebook', 'notebook_tree']
     }
 

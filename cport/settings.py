@@ -43,7 +43,8 @@ CELERY_IMPORTS = (
     'command.lib.tasks.run_platform_mapper',
     'command.lib.tasks.import_experiment',
     'command.lib.tasks.import_platform_mapping',
-    'command.lib.tasks.export_data'
+    'command.lib.tasks.export_data',
+    'command.lib.tasks.ontology',
 )
 
 #: Only add pickle to this list if your broker is secured

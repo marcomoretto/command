@@ -306,6 +306,43 @@ Ext.define('command.Application', {
             }]
         }]
         });
+        var main = Ext.create('Ext.panel.Panel', {
+            title: 'Select State(s)',
+            bodyPadding: 5,
+            frame: true,
+            width: 600,
+            layout: 'form',
+            viewModel: {},
+
+            items: [{
+                xtype: 'displayfield',
+                fieldLabel: 'Selected States',
+                bind: '{states.value}'
+            }, {
+                xtype: 'tagfield',
+                store:  Ext.create('Ext.data.Store', {
+                    fields: ['id','show'],
+                    data: [
+                        {id: 0, show: 'Battlestar Galactica'},
+                        {id: 1, show: 'Doctor Who'},
+                        {id: 2, show: 'Farscape'},
+                        {id: 3, show: 'Firefly'},
+                        {id: 4, show: 'Star Trek'},
+                        {id: 5, show: 'Star Wars: Christmas Special'}
+                    ]
+                    }),
+                fieldLabel: 'Select a Show',
+                displayField: 'show',
+                valueField: 'id',
+                queryMode: 'local',
+                filterPickList: true
+            }],
+            buttons: [{
+                text: 'OK'
+            }, {
+                text: 'Cancel'
+            }]
+        });
         /*var main = Ext.create('Ext.panel.Panel', {
             title: 'Employee Information',
             width: 600,
@@ -580,8 +617,8 @@ Ext.define('RequestMixin', {
         if (this.store) {
             page_size = this.store.pageSize;
         }
-        if (this.columns) {
-            this.columns.forEach(function (c, i) {
+        if (this.getColumnManager && this.getColumnManager().columns) {
+            this.getColumnManager().columns.forEach(function (c, i) {
                 if (c.sortState) {
                     ordering = c.sortState;
                     ordering_value = c.dataIndex;
@@ -658,12 +695,14 @@ Ext.define('command.Grid', {
         },
         headerclick: function(ct, column, e, t, eOpts) {
             var grid = ct.up('command_grid');
+            console.log(column);
             if (!column.isCheckerHd) {
                 var ws = command.current.ws;
                 grid.store.loadData([], false);
                 var operation = grid.command_read_operation;
                 var request = grid.getRequestObject(operation);
                 request.values = this.down('command_paging').getValues();
+                request.ordering_value = column.dataIndex;
                 ws.stream(request.view).send(request);
             }
         },
@@ -683,6 +722,7 @@ Ext.define('command.Grid', {
                         me.setLoading(false);
                         if (me.store) {
                             me.store.getProxy().setData(action.data);
+                            console.log(action.data);
                             me.store.loadPage(action.request.page, {
                                 start: 0
                             });
