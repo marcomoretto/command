@@ -11,6 +11,7 @@ from command.lib.db.admin.compendium_database import CompendiumDatabase
 from command.lib.utils.permission import Permission as CommandPermission
 from command.lib.views.admin_options_view import AdminOptionsView
 from command.lib.views.bio_feature import BioFeatureView, BioFeatureGeneView
+from command.lib.views.bio_feature_anno import BioFeatureAnnoView
 from command.lib.views.bio_feature_reporter import BioFeatureReporterView
 from command.lib.views.compendium_manager import CompendiumManagerView
 from command.lib.views.experiment_public import ExperimentPublicView
@@ -37,6 +38,7 @@ class Dispatcher:
         PlatformView: ['platform_manager', 'platforms', 'related_platforms'],
         MicroarrayPlatformView: ['microarray_platforms', 'window_map_microarray_platform'],
         BioFeatureView: ['bio_feature'],
+        BioFeatureAnnoView: ['bio_feature_anno', 'bio_feature_annotation', 'window_import_bio_feature_annotation'],
         BioFeatureGeneView: ['bio_feature_gene', 'window_import_gene_bio_features'],
         BioFeatureReporterView: ['bio_feature_reporter'],
         ParseExperimentView: ['parse_experiment', 'parse_experiment_bio_feature_reporter',
@@ -47,7 +49,7 @@ class Dispatcher:
         MessageLogView: ['message_log'],
         ExportDataView: ['export_data'],
         TestView: ['test'],
-        OntologiesView: ['ontologies', 'view_ontology'],
+        OntologiesView: ['ontologies', 'view_ontology', 'window_new_ontology', 'window_new_ontology_node'],
         JupyterNotebookView: ['jupyter_notebook', 'notebook_tree']
     }
 

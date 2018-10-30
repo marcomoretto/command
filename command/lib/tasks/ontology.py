@@ -68,7 +68,7 @@ def create_ontology_task(self, user_id, compendium_id, ontology_name,
                 nodes.append(node)
             OntologyNode.objects.using(compendium.compendium_nick_name).bulk_create(nodes)
         node_ids = dict(OntologyNode.objects.using(compendium.compendium_nick_name).filter(ontology=ontology).values_list('original_id', 'id'))
-        for c in chunks(structure['elements']['edges'], 1000):
+        for c in chunks(structure['elements']['edges'], 10000):
             edges = []
             for e in c:
                 edge = OntologyEdge()

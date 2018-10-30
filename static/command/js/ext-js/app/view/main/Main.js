@@ -108,19 +108,20 @@ Ext.define('command.view.main.Main', {
                     glyph: 'xf06c',
                     iconCls: null,
                     displayText: 'Biological features',
-                    /*listeners: {
+                    listeners: {
                         click: {
                             fn: 'onAction',
-                            hash: 'view/message_log',
-                            glyph: 'f086',
-                            panel: 'message_log'
+                            hash: 'view/bio_feature_annotation',
+                            glyph: 'xf06c',
+                            panel: 'bio_feature_annotation'
                         }
-                    }*/
+                    }
                 }, {
                     text: 'Samples',
                     glyph: 'f1fb',
                     iconCls: null,
                     displayText: 'Samples',
+                    disabled: true,
                     /*listeners: {
                         click: {
                             fn: 'onAction',
@@ -151,10 +152,10 @@ Ext.define('command.view.main.Main', {
             glyph: 'f1fe',
             menu: {
                 items: [{
-                    text: 'Normalize data',
+                    text: 'Normalization manager',
                     glyph: 'f080',
                     iconCls: null,
-                    displayText: 'Normalize data',
+                    displayText: 'Normalization manager',
                     /*listeners: {
                      click: {
                      fn: 'onAction',
@@ -167,7 +168,7 @@ Ext.define('command.view.main.Main', {
                     text: 'Define experimental conditions',
                     glyph: 'f0e7',
                     iconCls: null,
-                    displayText: 'Biological features',
+                    displayText: 'Define experimental conditions',
                     /*listeners: {
                      click: {
                      fn: 'onAction',
@@ -189,19 +190,6 @@ Ext.define('command.view.main.Main', {
                             panel: 'jupyter_notebook'
 }
                      }
-                }, '-', {
-                    text: 'Publish',
-                    glyph: 'f135',
-                    iconCls: null,
-                    displayText: 'Publish',
-                    /*listeners: {
-                     click: {
-                     fn: 'onAction',
-                     hash: 'view/message_log',
-                     glyph: 'f086',
-                     panel: 'message_log'
-                     }
-                     }*/
                 }]
             }
         },/*{
@@ -368,12 +356,7 @@ Ext.define('command.view.main.Main', {
     }],
 
     listeners: {
-        afterrender: function ( me, eOpts ) {
-            var compendium = JSON.parse(localStorage.getItem("current_compendium"));
-            if (!compendium) {
-                me.down('#data_collection_menu_item').disable();
-            }
-        }
+        afterrender: 'mainAfterRender'
     },
 
     initComponent: function() {

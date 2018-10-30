@@ -150,7 +150,7 @@ Ext.define('command.view.annotation.ontologies.OntologiesController', {
         var panel = tabpanel.down('available_ontologies');
         var ontology = panel.getSelection()[0].data;
         var height = 300 + (35 * ontology.columns.length);
-        var win = Ext.create({
+        var win = command.current.createWin({
             xtype: 'window_new_ontology_node',
             ontology: ontology,
             height: height,
@@ -173,13 +173,13 @@ Ext.define('command.view.annotation.ontologies.OntologiesController', {
     },
 
     onNewOntology: function (me) {
-        var win = Ext.create({
+        var win = command.current.createWin({
             xtype: 'window_new_ontology'
         });
     },
 
     onUpdateOntology: function (me) {
-        var win = Ext.create({
+        var win = command.current.createWin({
             xtype: 'window_new_ontology'
         });
         console.log(me.id);

@@ -46,6 +46,7 @@ Ext.define('command.Application', {
         'platform_manager': 'f21a',
         'message_log': 'f086',
         'bio_feature': 'f1fb',
+        'bio_feature_annotation': 'f06c',
         'welcome': 'f259'
     },
 
@@ -104,7 +105,7 @@ Ext.define('command.Application', {
         console.log(views, compendium, panel);
         if ((compendium && views[compendium.compendium_nick_name].indexOf(panel) != -1) ||
             (views['no_compendium'].indexOf(panel) != -1)) {
-            Ext.create(config);
+            return Ext.create(config);
         } else {
             this.showMessage('permission_error', '', '');
         }
@@ -563,6 +564,7 @@ Ext.define('command.LiveFilter', {
             request.page = 1;
             request.values = me.getValues();
             console.log(request);
+            grid.setLoading(true);
             ws.stream(request.view).send(request);
         }
     }
@@ -589,6 +591,7 @@ Ext.define('command.Paging', {
             var request = grid.getRequestObject(grid.command_read_operation);
             request.page = page;
             request.values = this.getValues();
+            grid.setLoading(true);
             ws.stream(request.view).send(request);
         }
     }
@@ -703,6 +706,7 @@ Ext.define('command.Grid', {
                 var request = grid.getRequestObject(operation);
                 request.values = this.down('command_paging').getValues();
                 request.ordering_value = column.dataIndex;
+                grid.setLoading(true);
                 ws.stream(request.view).send(request);
             }
         },
@@ -726,6 +730,7 @@ Ext.define('command.Grid', {
                             me.store.loadPage(action.request.page, {
                                 start: 0
                             });
+                            me.setLoading(false);
                         }
                     }
                 }
@@ -733,12 +738,14 @@ Ext.define('command.Grid', {
                     ws.stream(request.view).send(request);
                 }
             });
+            me.setLoading(true);
             ws.stream(request.view).send(request);
         },
         beforeshow: function ( me, eOpts ) {
             var ws = command.current.ws;
             var operation = me.command_read_operation;;
             var request = this.getRequestObject(operation);
+            me.setLoading(true);
             ws.stream(request.view).send(request);
         },
         render: function(grid) {

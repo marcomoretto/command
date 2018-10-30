@@ -18,6 +18,7 @@ from django.conf.urls import url
 from command import views
 from command.lib.views.admin_options_view import AdminOptionsView
 from command.lib.views.bio_feature import BioFeatureView, BioFeatureGeneView
+from command.lib.views.bio_feature_anno import BioFeatureAnnoView
 from command.lib.views.bio_feature_reporter import BioFeatureReporterView
 from command.lib.views.compendium_manager import CompendiumManagerView
 from command.lib.views.experiment_local import ExperimentLocalView
@@ -65,6 +66,7 @@ urlpatterns = [
     url(r'^microarray_platforms/(?P<operation>\w+)$', MicroarrayPlatformView.as_view(), name='microarray_platforms'),
     url(r'^check_bio_features/$', views.check_bio_features, name='check_bio_features'),
     url(r'^ontologies/(?P<operation>\w+)$', OntologiesView.as_view(), name='ontologies'),
+    url(r'^bio_feature_anno/(?P<operation>\w+)$', BioFeatureAnnoView.as_view(), name='bio_feature_anno'),
     url(r'^jupyter_notebook/(?P<operation>\w+)$', JupyterNotebookView.as_view(), name='jupyter_notebook'),
 
     url(r'^test/(?P<operation>\w+)$', TestView.as_view(), name='test'),

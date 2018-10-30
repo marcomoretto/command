@@ -63,12 +63,23 @@ Ext.define('command.view.main.MainController', {
         ws.stream(request.view).send(request);
     },
 
+    mainAfterRender: function ( me, eOpts ) {
+        var compendium = JSON.parse(localStorage.getItem("current_compendium"));
+        if (!compendium) {
+            me.down('#data_collection_menu_item').disable();
+            me.down('#annotation_menu_item').disable();
+            me.down('#normalization_menu_item').disable();
+        }
+    },
+
     onSelectCompendium: function( me, record, eOpts ) {
         var main = Ext.ComponentQuery.query('#main_panel')[0];
         var mainTab = Ext.ComponentQuery.query('#main_tab_panel')[0];
         console.log(record.data);
         localStorage.setItem("current_compendium", JSON.stringify(record.data));
         main.down('#data_collection_menu_item').enable();
+        main.down('#annotation_menu_item').enable();
+        main.down('#normalization_menu_item').enable();
         mainTab.items.items.forEach(function (p) {
             var pName = p.itemId;
             var glyph = p.glyph;

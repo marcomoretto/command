@@ -7,6 +7,7 @@ import shutil
 from django.core.management import call_command
 from django.db import connections, transaction
 
+from command.lib.db.compendium.bio_feature_annotation import BioFeatureAnnotation
 from command.lib.db.compendium.ontology import Ontology
 from command.lib.db.compendium.ontology_edge import OntologyEdge
 from command.lib.db.compendium.ontology_node import OntologyNode
