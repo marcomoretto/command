@@ -20,6 +20,8 @@ from command.lib.views.export_data import ExportDataView
 from command.lib.views.file_assignment import FileAssignmentView
 from command.lib.views.jupyter_notebook import JupyterNotebookView
 from command.lib.views.message_log import MessageLogView
+from command.lib.views.normalization_experiment import NormalizationExperimentView
+from command.lib.views.normalization_manager import NormalizationManagerView
 from command.lib.views.ontologies import OntologiesView
 from command.lib.views.parse_experiment import ParseExperimentView
 from command.lib.views.platforms import PlatformView, MicroarrayPlatformView
@@ -50,7 +52,10 @@ class Dispatcher:
         ExportDataView: ['export_data'],
         TestView: ['test'],
         OntologiesView: ['ontologies', 'view_ontology', 'window_new_ontology', 'window_new_ontology_node'],
-        JupyterNotebookView: ['jupyter_notebook', 'notebook_tree']
+        JupyterNotebookView: ['jupyter_notebook', 'notebook_tree'],
+        NormalizationManagerView: ['normalization_manager', 'normalization', 'normalization_experiment',
+                                   'window_new_normalization', 'window_add_experiment', 'win_normalization_manager'],
+        NormalizationExperimentView: ['normalization_experiment']
     }
 
     @staticmethod

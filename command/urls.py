@@ -28,6 +28,8 @@ from command.lib.views.export_data import ExportDataView
 from command.lib.views.file_assignment import FileAssignmentView
 from command.lib.views.jupyter_notebook import JupyterNotebookView
 from command.lib.views.message_log import MessageLogView
+from command.lib.views.normalization_experiment import NormalizationExperimentView
+from command.lib.views.normalization_manager import NormalizationManagerView
 from command.lib.views.ontologies import OntologiesView
 from command.lib.views.parse_experiment import ParseExperimentView
 from command.lib.views.platforms import PlatformView, MicroarrayPlatformView
@@ -68,6 +70,8 @@ urlpatterns = [
     url(r'^ontologies/(?P<operation>\w+)$', OntologiesView.as_view(), name='ontologies'),
     url(r'^bio_feature_anno/(?P<operation>\w+)$', BioFeatureAnnoView.as_view(), name='bio_feature_anno'),
     url(r'^jupyter_notebook/(?P<operation>\w+)$', JupyterNotebookView.as_view(), name='jupyter_notebook'),
+    url(r'^normalization_manager/(?P<operation>\w+)$', NormalizationManagerView.as_view(), name='normalization_manager'),
+    url(r'^normalization_experiment/(?P<operation>\w+)$', NormalizationExperimentView.as_view(), name='normalization_experiment'),
 
     url(r'^test/(?P<operation>\w+)$', TestView.as_view(), name='test'),
 ]

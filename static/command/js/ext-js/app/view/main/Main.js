@@ -153,31 +153,18 @@ Ext.define('command.view.main.Main', {
             menu: {
                 items: [{
                     text: 'Normalization manager',
-                    glyph: 'f080',
+                    glyph: 'f1fe',
                     iconCls: null,
                     displayText: 'Normalization manager',
-                    /*listeners: {
-                     click: {
-                     fn: 'onAction',
-                     hash: 'view/message_log',
-                     glyph: 'f086',
-                     panel: 'message_log'
-                     }
-                     }*/
+                    listeners: {
+                        click: {
+                            fn: 'onAction',
+                            hash: 'view/normalization_manager',
+                            glyph: 'f1fe',
+                            panel: 'normalization_manager'
+                        }
+                    }
                 }, {
-                    text: 'Define experimental conditions',
-                    glyph: 'f0e7',
-                    iconCls: null,
-                    displayText: 'Define experimental conditions',
-                    /*listeners: {
-                     click: {
-                     fn: 'onAction',
-                     hash: 'view/message_log',
-                     glyph: 'f086',
-                     panel: 'message_log'
-                     }
-                     }*/
-                }, '-', {
                     text: 'Jupyter notebook',
                     glyph: 'f12b',
                     iconCls: null,
@@ -208,7 +195,7 @@ Ext.define('command.view.main.Main', {
         },*/{
             text: 'Options',
             iconCls: null,
-            glyph: 'xf0ca',
+            glyph: 'xf142',
             menu: {
                 items: [{
                     text: 'Change compendium',
@@ -282,25 +269,25 @@ Ext.define('command.view.main.Main', {
                 },{
                     text: 'Compendium manager',
                     iconCls: null,
-                    glyph: 'xf00a',
+                    glyph: 'xf0ad',
                     displayText: 'Compendium manager',
                     listeners: {
                         click: {
                             fn: 'onAction',
                             hash: 'view/compendia_manager',
-                            glyph: 'xf00a',
+                            glyph: 'xf0ad',
                             panel: 'compendia_manager'
                         }
                     }
                 },'-', {
                     text: 'Options',
                     iconCls: null,
-                    glyph: 'xf0ca',
+                    glyph: 'xf142',
                     listeners: {
                         click: {
                             fn: 'onAction',
                             hash: 'view/admin_options',
-                            glyph: 'xf085',
+                            glyph: 'xf142',
                             panel: 'admin_options'
                         }
                     }

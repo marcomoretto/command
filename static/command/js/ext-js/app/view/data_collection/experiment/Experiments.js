@@ -137,28 +137,7 @@ Ext.define('command.view.data_collection.experiment.Experiments', {
         dataIndex: 'status',
         iconCls: 'dimgrayIcon',
         renderer: function (value, metaData, record, rowIdx, colIdx, store, view) {
-            switch (value) {
-                case 'experiment_new':
-                    this.items[0].glyph = command.current.experiment_status_glyph['new'];
-                    this.items[0].tooltip = record.data.status_description;
-                    break;
-                case 'experiment_downloading':
-                    this.items[0].glyph = command.current.experiment_status_glyph['downloading'];
-                    this.items[0].tooltip = record.data.status_description;
-                    break;
-                case 'experiment_data_ready':
-                    this.items[0].glyph = command.current.experiment_status_glyph['data_ready'];
-                    this.items[0].tooltip = record.data.status_description;
-                    break;
-                case 'experiment_raw_data_imported':
-                    this.items[0].glyph = command.current.experiment_status_glyph['raw_data'];
-                    this.items[0].tooltip = record.data.status_description;
-                    break;
-                case 'experiment_excluded':
-                    this.items[0].glyph = command.current.experiment_status_glyph['excluded'];
-                    this.items[0].tooltip = record.data.status_description;
-                    break;
-            }
+            command.current.getExperimentGlyph(this, value, record.data.status_description);
         }
     }, {
         text: 'Source',

@@ -33,7 +33,6 @@ Ext.define('command.view.annotation.bio_feature.BioFeatureController', {
     },
 
     onBioFeatureAnnotationFileUpload: function(me) {
-        console.log(me.id);
         var panel = me.up('#bio_feature_anno_file_chooser');
         var win = me.up('window_import_bio_feature_annotation');
         var operation = 'upload_bio_feature_annotation';

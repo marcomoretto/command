@@ -8,6 +8,11 @@ from django.core.management import call_command
 from django.db import connections, transaction
 
 from command.lib.db.compendium.bio_feature_annotation import BioFeatureAnnotation
+from command.lib.db.compendium.normalization import Normalization
+from command.lib.db.compendium.normalization_experiment import NormalizationExperiment
+from command.lib.db.compendium.normalization_design import NormalizationDesign
+from command.lib.db.compendium.normalization_design_sample import NormalizationDesignSample
+from command.lib.db.compendium.normalized_data import NormalizedData
 from command.lib.db.compendium.ontology import Ontology
 from command.lib.db.compendium.ontology_edge import OntologyEdge
 from command.lib.db.compendium.ontology_node import OntologyNode
@@ -29,6 +34,7 @@ from command.lib.db.compendium.experiment import Experiment
 from command.lib.db.compendium.status import Status
 from command.lib.db.compendium.message_log import MessageLog
 from command.lib.db.compendium.platform import Platform
+from command.lib.db.compendium.value_type import ValueType
 from command.lib.db.parsing.parsing_bio_feature_reporter import ParsingBioFeatureReporter
 from command.lib.db.parsing.parsing_experiment import ParsingExperiment
 from command.lib.db.parsing.parsing_platform import ParsingPlatform

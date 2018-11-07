@@ -39,14 +39,16 @@ Ext.define('command.Application', {
         'test': 'xf11b',
         'parse_experiment': 'xf120',
         'import_experiment_public': 'xf0c3',
-        'compendia_manager': 'xf00a',
+        'compendia_manager': 'xf0ad',
         'user_group_manager': 'xf0c0',
-        'admin_options': 'xf0ca',
+        'admin_options': 'xf142',
         'experiments': 'xf0c3',
         'platform_manager': 'f21a',
         'message_log': 'f086',
         'bio_feature': 'f1fb',
         'bio_feature_annotation': 'f06c',
+        'normalization_manager': 'f1fe',
+        'normalization_experiment': 'f080',
         'welcome': 'f259'
     },
 
@@ -70,7 +72,8 @@ Ext.define('command.Application', {
     },
 
     panel_multi_instances: [
-        'parse_experiment'
+        'parse_experiment',
+        'normalization_experiment'
     ],
 
     admin_panels: [
@@ -95,6 +98,31 @@ Ext.define('command.Application', {
         'view/:panel/:params': {
             before : 'wsConnect',
             action : 'onShowPanel'
+        }
+    },
+
+    getExperimentGlyph: function(cell, value, description) {
+        switch (value) {
+            case 'experiment_new':
+                cell.items[0].glyph = command.current.experiment_status_glyph['new'];
+                cell.items[0].tooltip = description;
+                break;
+            case 'experiment_downloading':
+                cell.items[0].glyph = command.current.experiment_status_glyph['downloading'];
+                cell.items[0].tooltip = description;
+                break;
+            case 'experiment_data_ready':
+                cell.items[0].glyph = command.current.experiment_status_glyph['data_ready'];
+                cell.items[0].tooltip = description;
+                break;
+            case 'experiment_raw_data_imported':
+                cell.items[0].glyph = command.current.experiment_status_glyph['raw_data'];
+                cell.items[0].tooltip = description;
+                break;
+            case 'experiment_excluded':
+                cell.items[0].glyph = command.current.experiment_status_glyph['excluded'];
+                cell.items[0].tooltip = description;
+                break;
         }
     },
 
@@ -160,7 +188,6 @@ Ext.define('command.Application', {
     },
 
     checkHttpResponse: function (message) {
-        console.log('HTTP');
         var response = JSON.parse(message.responseText);
         if (!response.success) {
             this.showMessage(response.type, response.title, response.message);
@@ -735,6 +762,7 @@ Ext.define('command.Grid', {
                     }
                 }
                 if (action.request.operation == 'refresh') {
+                    request.values = action.request.values;
                     ws.stream(request.view).send(request);
                 }
             });
