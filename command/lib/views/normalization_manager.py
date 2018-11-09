@@ -41,6 +41,7 @@ class NormalizationManagerView(View):
         for e in query_response:
             ex = e.to_dict()
             ex['valid'] = True
+            ex['experiment_access_id_extended'] = e.experiment_access_id + ' - ' + e.experiment_name
             exps.append(ex)
 
         channel.send({

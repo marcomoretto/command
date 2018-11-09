@@ -18,7 +18,7 @@ Ext.define('command.view.normalization.norm_manager.AddExperiment', {
     closable: true,
     autoShow: true,
     modal: true,
-    width: 400,
+    width: 600,
     height: 150,
     constrain: true,
 
@@ -63,7 +63,7 @@ Ext.define('command.view.normalization.norm_manager.AddExperimentPanel', {
         items: [{
             xtype: 'combobox',
             fieldLabel: 'Accession',
-            displayField: 'experiment_access_id',
+            displayField: 'experiment_access_id_extended',
             valueField: 'id',
             anchor: '100%',
             margin: '10 10 10 5',

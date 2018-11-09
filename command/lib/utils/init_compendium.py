@@ -10,7 +10,7 @@ from django.db import connections, transaction
 from command.lib.db.compendium.bio_feature_annotation import BioFeatureAnnotation
 from command.lib.db.compendium.normalization import Normalization
 from command.lib.db.compendium.normalization_experiment import NormalizationExperiment
-from command.lib.db.compendium.normalization_design import NormalizationDesign
+from command.lib.db.compendium.normalization_design_group import NormalizationDesignGroup
 from command.lib.db.compendium.normalization_design_sample import NormalizationDesignSample
 from command.lib.db.compendium.normalized_data import NormalizedData
 from command.lib.db.compendium.ontology import Ontology

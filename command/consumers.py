@@ -53,8 +53,8 @@ class Dispatcher:
         TestView: ['test'],
         OntologiesView: ['ontologies', 'view_ontology', 'window_new_ontology', 'window_new_ontology_node'],
         JupyterNotebookView: ['jupyter_notebook', 'notebook_tree'],
-        NormalizationManagerView: ['normalization_manager', 'normalization', 'normalization_experiment',
-                                   'window_new_normalization', 'window_add_experiment', 'win_normalization_manager'],
+        NormalizationManagerView: ['normalization_manager', 'normalization', 'window_new_normalization',
+                                   'window_add_experiment', 'win_normalization_manager'],
         NormalizationExperimentView: ['normalization_experiment']
     }
 

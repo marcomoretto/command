@@ -696,23 +696,48 @@ Ext.define('command.Grid', {
 
     command_read_operation: null,
 
-    dockedItems: [{
-        dock: 'top',
-        xtype: 'toolbar',
-        itemId: 'command_toptoolbar',
-        items: [{
-            xtype: 'command_paging',
-            itemId: 'command_paging',
-            displayInfo: true
-        }, '->', {
-            xtype: 'command_livefilter',
-            fieldLabel: 'Filter',
-            name: 'filter'
-        }]
-    }],
+    alternative_layout: false,
 
     initComponent: function() {
         this.callParent(arguments);
+        if (this.alternative_layout) {
+            this.addDocked({
+                dock: 'top',
+                xtype: 'toolbar',
+                frame: false,
+                border: false,
+                itemId: 'command_toptoolbar',
+                layout: {
+                    type: 'vbox',
+                    align: 'left',
+                    pack: 'center'
+                },
+                items: [{
+                    xtype: 'command_paging',
+                    itemId: 'command_paging',
+                    displayInfo: true
+                }, {
+                    xtype: 'command_livefilter',
+                    fieldLabel: 'Filter',
+                    name: 'filter'
+                }]
+            });
+        } else {
+            this.addDocked({
+                dock: 'top',
+                xtype: 'toolbar',
+                itemId: 'command_toptoolbar',
+                items: [{
+                    xtype: 'command_paging',
+                    itemId: 'command_paging',
+                    displayInfo: true
+                }, '->', {
+                    xtype: 'command_livefilter',
+                    fieldLabel: 'Filter',
+                    name: 'filter'
+                }]
+            });
+        }
         this.headerCt.items.each(function(c){
             c.menuDisabled = true;
         });
