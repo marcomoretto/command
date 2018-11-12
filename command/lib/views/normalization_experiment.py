@@ -226,6 +226,82 @@ class NormalizationExperimentView(View):
         return HttpResponse(json.dumps({'success': True}),
                             content_type="application/json")
 
+    @staticmethod
+    @forward_exception_to_http
+    def link_conditions(request, *args, **kwargs):
+        values = json.loads(request.POST['values'])
+
+        comp_id = request.POST['compendium_id']
+        channel_name = request.session['channel_name']
+        view = request.POST['view']
+        compendium = CompendiumDatabase.objects.get(id=comp_id)
+
+        ndg = NormalizationDesignGroup.objects.using(compendium.compendium_nick_name).get(id=values['normalization_experiment_id'])
+        source = values['nodes'][0]
+        target = values['nodes'][1]
+
+        to_remove = []
+        for edge in ndg.design['elements']['edges']:
+            if edge['data']['source'] == source and edge['data']['target'] == target:
+                to_remove.append(edge)
+        for edge in to_remove:
+            ndg.design['elements']['edges'].remove(edge)
+        ndg.design['elements']['edges'].append({
+            'data': {
+                'id': source + '_' + target,
+                'source': source,
+                'target': target
+            }
+        })
+        ndg.save(using=compendium.compendium_nick_name)
+
+        Group("compendium_" + str(comp_id)).send({
+            'text': json.dumps({
+                'stream': view,
+                'payload': {
+                    'request': {'operation': 'refresh'},
+                    'data': None
+                }
+            })
+        })
+
+        return HttpResponse(json.dumps({'success': True}),
+                            content_type="application/json")
+
+    @staticmethod
+    @forward_exception_to_http
+    def unlink_conditions(request, *args, **kwargs):
+        values = json.loads(request.POST['values'])
+
+        comp_id = request.POST['compendium_id']
+        channel_name = request.session['channel_name']
+        view = request.POST['view']
+        compendium = CompendiumDatabase.objects.get(id=comp_id)
+
+        ndg = NormalizationDesignGroup.objects.using(compendium.compendium_nick_name).get(
+            id=values['normalization_experiment_id'])
+
+        to_remove = []
+        for edge in ndg.design['elements']['edges']:
+            for e in values['edges']:
+                if edge['data']['id'] == e:
+                    to_remove.append(edge)
+        for edge in to_remove:
+            ndg.design['elements']['edges'].remove(edge)
+        ndg.save(using=compendium.compendium_nick_name)
+
+        Group("compendium_" + str(comp_id)).send({
+            'text': json.dumps({
+                'stream': view,
+                'payload': {
+                    'request': {'operation': 'refresh'},
+                    'data': None
+                }
+            })
+        })
+
+        return HttpResponse(json.dumps({'success': True}),
+                            content_type="application/json")
 
     @staticmethod
     @forward_exception_to_http

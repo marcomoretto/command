@@ -237,6 +237,7 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentDesig
             region: 'center',
             layout: 'border',
             title: 'Design',
+            itemId: 'design_panel',
             flex: 1,
             bodyBorder: false,
             defaults: {
@@ -246,6 +247,7 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentDesig
             bbar: [{
                 text: null,
                 xtype: 'button',
+                itemId: 'newConditionButton',
                 tooltip: {
                     text: 'New condition (group samples)'
                 },
@@ -254,10 +256,12 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentDesig
                 scale: 'medium',
                 listeners: {
                     click: 'onNewCondition'
-                }
+                },
+                disabled: true
             }, {
                 text: null,
                 iconCls: null,
+                itemId: 'deleteConditionButton',
                 tooltip: {
                     text: 'Delete condition (ungroup samples)'
                 },
@@ -265,29 +269,34 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentDesig
                 scale: 'medium',
                 listeners: {
                     click: 'onDeleteCondition'
-                }
+                },
+                disabled: true
             }, {
                 text: null,
                 iconCls: null,
+                itemId: 'linkConditionButton',
                 tooltip: {
                     text: 'Link conditions'
                 },
                 glyph: 'f0c1',
                 scale: 'medium',
                 listeners: {
-                    //click: 'onDeleteBiologicalFeatureAnnotation'
-                }
+                    click: 'onLinkConditions'
+                },
+                disabled: true
             }, {
                 text: null,
                 iconCls: null,
+                itemId: 'unlinkConditionButton',
                 tooltip: {
                     text: 'Unlink conditions'
                 },
                 glyph: 'f127',
                 scale: 'medium',
                 listeners: {
-                    //click: 'onDeleteBiologicalFeatureAnnotation'
-                }
+                    click: 'onUninkConditions'
+                },
+                disabled: true
             }],
             items: [{
                 xtype: 'cy_design',

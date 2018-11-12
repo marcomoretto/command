@@ -47,21 +47,23 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentContr
                 'condition_name': text,
                 'samples': selected
             });
-            Ext.Ajax.request({
-                url: request.view + '/' + request.operation,
-                params: request,
-                success: function (response) {
-                    if (command.current.checkHttpResponse(response)) {
-                        var refreshRequest = panel.getRequestObject('select_design_group');
-                        var cy_panel = panel.down('cy_design');
-                        refreshRequest.values = designGroupPanel.getSelection()[0].id;
-                        panel.controller.requestDrawDesign(refreshRequest, cy_panel);
+            if (btn == 'ok') {
+                Ext.Ajax.request({
+                    url: request.view + '/' + request.operation,
+                    params: request,
+                    success: function (response) {
+                        if (command.current.checkHttpResponse(response)) {
+                            var refreshRequest = panel.getRequestObject('select_design_group');
+                            var cy_panel = panel.down('cy_design');
+                            refreshRequest.values = designGroupPanel.getSelection()[0].id;
+                            panel.controller.requestDrawDesign(refreshRequest, cy_panel);
+                        }
+                    },
+                    failure: function (response) {
+                        console.log('Server error', reponse);
                     }
-                },
-                failure: function (response) {
-                    console.log('Server error', reponse);
-                }
-            });
+                });
+            }
         });
     },
 
@@ -73,16 +75,18 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentContr
                 'group_id': panel.getSelection()[0].id,
                 'group_name': text
             });
-            Ext.Ajax.request({
-                url: request.view + '/' + request.operation,
-                params: request,
-                success: function (response) {
-                    command.current.checkHttpResponse(response);
-                },
-                failure: function (response) {
-                    console.log('Server error', reponse);
-                }
-            });
+            if (btn == 'ok') {
+                Ext.Ajax.request({
+                    url: request.view + '/' + request.operation,
+                    params: request,
+                    success: function (response) {
+                        command.current.checkHttpResponse(response);
+                    },
+                    failure: function (response) {
+                        console.log('Server error', reponse);
+                    }
+                });
+            }
         });
     },
 
@@ -107,6 +111,60 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentContr
                 console.log('Server error', reponse);
             }
         })
+    },
+
+    onUninkConditions: function(me) {
+        var panel = me.up('normalization_experiment_design');
+        var cy_panel = panel.down('cy_design');
+        var designGroupPanel = panel.down('normalization_design_group');
+        var request = panel.getRequestObject('unlink_conditions');
+        var edges = [];
+        cy_panel.cy.$(':selected').forEach(function (e, i) {
+            edges.push(e.json().data.id);
+        });
+        request.values = JSON.stringify({
+            'edges': edges,
+            'normalization_experiment_id': designGroupPanel.getSelection()[0].id
+        });
+        Ext.Ajax.request({
+            url: request.view + '/' + request.operation,
+            params: request,
+            success: function (response) {
+                if (command.current.checkHttpResponse(response)) {
+                    var request = designGroupPanel.getRequestObject('select_design_group');
+                    request.values = designGroupPanel.getSelection()[0].id;
+                    panel.controller.requestDrawDesign(request, cy_panel);
+                }
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+            }
+        });
+    },
+
+    onLinkConditions: function(me) {
+        var panel = me.up('normalization_experiment_design');
+        var cy_panel = panel.down('cy_design');
+        var designGroupPanel = panel.down('normalization_design_group');
+        var request = panel.getRequestObject('link_conditions');
+        request.values = JSON.stringify({
+            'nodes': cy_panel.cy.selected_nodes_order,
+            'normalization_experiment_id': designGroupPanel.getSelection()[0].id
+        });
+        Ext.Ajax.request({
+            url: request.view + '/' + request.operation,
+            params: request,
+            success: function (response) {
+                if (command.current.checkHttpResponse(response)) {
+                    var request = designGroupPanel.getRequestObject('select_design_group');
+                    request.values = designGroupPanel.getSelection()[0].id;
+                    panel.controller.requestDrawDesign(request, cy_panel);
+                }
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+            }
+        });
     },
 
     onDeleteNormalizationDesignGroup: function(me) {
@@ -139,6 +197,19 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentContr
     },
 
     doDrawDesign: function(cy_panel, cy_elements, request) {
+        var layout = 'circle';
+        if (cy_elements.nodes && cy_elements.nodes.length > 0 && cy_elements.nodes[0].position) {
+            layout = 'preset';
+        }
+        var panel = cy_panel.up('#design_panel');
+        var newConditionButton = panel.down('#newConditionButton');
+        var deleteConditionButton = panel.down('#deleteConditionButton');
+        var linkConditionButton = panel.down('#linkConditionButton');
+        var unlinkConditionButton = panel.down('#unlinkConditionButton');
+        newConditionButton.setDisabled(true);
+        deleteConditionButton.setDisabled(true);
+        linkConditionButton.setDisabled(true);
+        unlinkConditionButton.setDisabled(true);
         cy_panel.cy = cytoscape({
             container: document.getElementById(cy_panel.id), // container to render in
             elements: cy_elements,
@@ -177,16 +248,25 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentContr
                 }
             ],
             layout: {
-                name: 'circle'
+                name: layout
             },
             boxSelectionEnabled:true
         });
+        cy_panel.cy.selected_nodes_order = [];
         cy_panel.cy.on('free', 'node', function(evt){
             if (request) {
-                request.values = {
-                    'normalization_experiment_id': request.values,
-                    'node_positions': []
-                };
+                var jsonRequest = JSON.parse(request.values);
+                if (jsonRequest.normalization_experiment_id) {
+                    request.values = {
+                        'normalization_experiment_id': jsonRequest.normalization_experiment_id,
+                        'node_positions': []
+                    };
+                } else {
+                    request.values = {
+                        'normalization_experiment_id': request.values,
+                        'node_positions': []
+                    };
+                }
                 cy_panel.cy.nodes().forEach(function (e, i) {
                     var jsonNode = e.json();
                     request.values.node_positions.push({
@@ -207,12 +287,101 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentContr
                 });
             }
         });
-        cy_panel.cy.on('select', 'node', function(evt){
+        cy_panel.cy.on('select', 'edge', function(evt){
+            var panel = cy_panel.up('#design_panel');
+            var unlinkConditionButton = panel.down('#unlinkConditionButton');
             evt.target[0].animate({
-                'style': { 'background-color': 'green' }
+                'style': {
+                    'line-color': 'green',
+                    'width': 6,
+                    'target-arrow-color': 'green'
+                }
             });
+            unlinkConditionButton.setDisabled(false);
+        });
+        cy_panel.cy.on('unselect', 'edge', function(evt){
+            var panel = cy_panel.up('#design_panel');
+            var unlinkConditionButton = panel.down('#unlinkConditionButton');
+            evt.target[0].animate({
+                'style': {
+                    'line-color': '#9dbaea',
+                    'width': 4,
+                    'target-arrow-color': '#9dbaea'
+                }
+            });
+            unlinkConditionButton.setDisabled(true);
+        });
+        cy_panel.cy.on('select', 'node', function(evt){
+            var sampleNodes = [];
+            var conditionNodes = [];
+            cy_panel.cy.$(':selected').forEach(function (e, i) {
+                if (e.json().data.type == 'condition') {
+                    conditionNodes.push(e.json().data.id);
+                } else {
+                    sampleNodes.push(e.json().data.id);
+                }
+            });
+            var panel = cy_panel.up('#design_panel');
+            var newConditionButton = panel.down('#newConditionButton');
+            var deleteConditionButton = panel.down('#deleteConditionButton');
+            var linkConditionButton = panel.down('#linkConditionButton');
+            var unlinkConditionButton = panel.down('#unlinkConditionButton');
+            if (conditionNodes.length > 0) {
+                deleteConditionButton.setDisabled(false);
+            }
+            if (conditionNodes.length == 2) {
+                linkConditionButton.setDisabled(false);
+            }
+            if (sampleNodes.length > 1) {
+                newConditionButton.setDisabled(false);
+            }
+            if (sampleNodes.length > 0) {
+                linkConditionButton.setDisabled(true);
+            }
+            if (evt.target[0]._private.data.type == 'sample') {
+                evt.target[0].animate({
+                    'style': { 'background-color': 'blue' }
+                });
+            } else {
+                evt.target[0].animate({
+                    'style': { 'background-color': 'green' }
+                });
+            }
+            cy_panel.cy.selected_nodes_order.push(evt.target[0].json().data.id);
         });
         cy_panel.cy.on('unselect', 'node', function(evt){
+            var index = cy_panel.cy.selected_nodes_order.indexOf(evt.target[0].json().data.id);
+            if (index > -1) {
+              cy_panel.cy.selected_nodes_order.splice(index, 1);
+            }
+            var sampleNodes = [];
+            var conditionNodes = [];
+            cy_panel.cy.$(':selected').forEach(function (e, i) {
+                if (e.json().data.type == 'condition') {
+                    conditionNodes.push(e.json().data.id);
+                } else {
+                    sampleNodes.push(e.json().data.id);
+                }
+            });
+            var panel = cy_panel.up('#design_panel');
+            var newConditionButton = panel.down('#newConditionButton');
+            var deleteConditionButton = panel.down('#deleteConditionButton');
+            var linkConditionButton = panel.down('#linkConditionButton');
+            newConditionButton.setDisabled(true);
+            deleteConditionButton.setDisabled(true);
+            linkConditionButton.setDisabled(true);
+            if (conditionNodes.length > 0) {
+                deleteConditionButton.setDisabled(false);
+            }
+            if (conditionNodes.length == 2) {
+                linkConditionButton.setDisabled(false);
+            }
+            if (sampleNodes.length > 1) {
+                newConditionButton.setDisabled(false);
+            }
+            if (sampleNodes.length > 0) {
+                linkConditionButton.setDisabled(true);
+            }
             if (evt.target[0]._private.data.type == 'sample') {
                 evt.target[0].animate({
                     'style': { 'background-color': 'lightblue' }
@@ -233,10 +402,9 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentContr
             params: request,
             success: function (response) {
                 if (command.current.checkHttpResponse(response)) {
-                    var resp = JSON.parse(response.responseText);
+                    var reply = JSON.parse(response.responseText);
                     positionRequest.operation = 'update_node_positions';
-                    console.log(resp.design.elements);
-                    panel.controller.doDrawDesign(cy_panel, resp.design.elements, positionRequest);
+                    panel.controller.doDrawDesign(cy_panel, reply.design.elements, positionRequest);
                 }
             },
             failure: function (response) {
@@ -296,16 +464,18 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentContr
                 'group_name': text,
                 'samples': samples
             });
-            Ext.Ajax.request({
-                url: request.view + '/' + request.operation,
-                params: request,
-                success: function (response) {
-                    command.current.checkHttpResponse(response);
-                },
-                failure: function (response) {
-                    console.log('Server error', reponse);
-                }
-            });
+            if (btn == 'ok') {
+                Ext.Ajax.request({
+                    url: request.view + '/' + request.operation,
+                    params: request,
+                    success: function (response) {
+                        command.current.checkHttpResponse(response);
+                    },
+                    failure: function (response) {
+                        console.log('Server error', reponse);
+                    }
+                });
+            }
         });
     },
 
