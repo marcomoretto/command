@@ -3,6 +3,33 @@ Ext.define('command.view.normalization.norm_manager.NormalizationManagerControll
 
     alias: 'controller.normalization_manager_controller',
 
+    onDeleteNormalization: function (me) {
+        var panel = me.up('normalization_manager').down('normalization_experiment_list');
+        var grid = me.up('normalization_manager').down('normalization_list');
+        Ext.MessageBox.show({
+            title: 'Remove normalization',
+            msg: 'Are you sure you want to remove this normalization?',
+            buttons: Ext.MessageBox.YESNOCANCEL,
+            icon: Ext.MessageBox.QUESTION,
+            fn: function (a) {
+                if (a == 'yes') {
+                    var request = panel.getRequestObject('remove_normalization');
+                    request.values = grid.getSelection()[0].id;
+                    Ext.Ajax.request({
+                        url: request.view + '/' + request.operation,
+                        params: request,
+                        success: function (response) {
+                            command.current.checkHttpResponse(response);
+                        },
+                        failure: function (response) {
+                            console.log('Server error', reponse);
+                        }
+                    });
+                }
+            }
+        })
+    },
+
     onNormalizeExperiment: function (me) {
         var panel = me.up('#normalization_manager').down('#normalization_experiment_list');
         var exp = panel.getSelection()[0];
@@ -206,6 +233,60 @@ Ext.define('command.view.normalization.norm_manager.NormalizationManagerControll
         experimentPanel.down('command_livefilter').values = record.data.id;
         experimentPanel.down('command_paging').values = record.data.id;
         ws.stream(request.view).send(request);
+    },
+
+    onUpdateNormalization: function (me) {
+        var grid = me.up('normalization_manager').down('normalization_list');
+        var norm = grid.getSelection()[0];
+        var win = command.current.createWin({
+            xtype: 'window_new_normalization',
+            title: 'Update normalization ' + norm.data.name
+        });
+        var form = win.down('form');
+        var panel = win.down('#new_normalization_panel');
+        var combo = panel.down('#normalization_type');
+        request = panel.getRequestObject('get_normalization_type');
+        Ext.Ajax.request({
+            url: request.view + '/' + request.operation,
+            params: request,
+            success: function (response) {
+                if (command.current.checkHttpResponse(response)) {
+                    var resp = JSON.parse(response.responseText);
+                    combo.store.loadData(resp.normalization_type, false);
+                    form.getForm().setValues(norm.data);
+                    combo.setValue(norm.data.normalization_type.id);
+                }
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+            }
+        });
+        var button = panel.down('#create_normalization_button');
+        button.setText('Update normalization');
+        button.clearListeners();
+        button.el.on('click', function() {
+            var updateRequest = panel.getRequestObject('update_normalization');
+            updateRequest.values = form.getValues();
+            updateRequest.values.normalization_id = norm.id;
+            if (form.isValid()) {
+                form.submit({
+                    url: updateRequest.view + '/' + updateRequest.operation,
+                    waitMsg: null,
+                    params: {
+                        request: JSON.stringify(updateRequest)
+                    },
+                    success: function (f, response) {
+                        if (command.current.checkHttpResponse(response.response)) {
+                            win.close();
+                        }
+                    },
+                    failure: function (f, response) {
+                        command.current.checkHttpResponse(response.response);
+                    }
+                });
+            }
+        });
+        console.log(norm);
     },
 
     onCreateNormalization: function (me) {

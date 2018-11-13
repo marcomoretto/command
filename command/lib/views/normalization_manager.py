@@ -239,6 +239,73 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_http
+    def remove_normalization(request, *args, **kwargs):
+        values = json.loads(request.POST['values'])
+
+        comp_id = request.POST['compendium_id']
+        view = request.POST['view']
+        compendium = CompendiumDatabase.objects.get(id=comp_id)
+
+        norm = Normalization.objects.using(compendium.compendium_nick_name).get(id=values)
+        norm.delete(using=compendium.compendium_nick_name)
+
+        Group("compendium_" + str(comp_id)).send({
+            'text': json.dumps({
+                'stream': view,
+                'payload': {
+                    'request': {'operation': 'refresh', 'values': norm.id},
+                    'data': None
+                }
+            })
+        })
+
+        Group("compendium_" + str(comp_id)).send({
+            'text': json.dumps({
+                'stream': 'normalization',
+                'payload': {
+                    'request': {'operation': 'refresh', 'values': norm.id},
+                    'data': None
+                }
+            })
+        })
+
+        return HttpResponse(json.dumps({'success': True}),
+                            content_type="application/json")
+
+    @staticmethod
+    @forward_exception_to_http
+    def update_normalization(request, *args, **kwargs):
+        req = json.loads(request.POST['request'])
+
+        comp_id = req['compendium_id']
+        view = req['view']
+        channel_name = request.session['channel_name']
+        operation = req['operation']
+        compendium = CompendiumDatabase.objects.get(id=comp_id)
+
+        norm = Normalization.objects.using(compendium.compendium_nick_name).get(id=req['values']['normalization_id'])
+        norm.name = req['values']['name']
+        norm.is_public = 'is_public' in req['values'] and req['values']['is_public'] == '1'
+        norm.normalization_type_id = req['values']['normalization_type']
+        norm.version = req['values']['version']
+        norm.save(using=compendium.compendium_nick_name)
+
+        Group("compendium_" + str(comp_id)).send({
+            'text': json.dumps({
+                'stream': 'normalization',
+                'payload': {
+                    'request': {'operation': 'refresh', 'values': norm.id},
+                    'data': None
+                }
+            })
+        })
+
+        return HttpResponse(json.dumps({'success': True}),
+                            content_type="application/json")
+
+
+    @staticmethod
+    @forward_exception_to_http
     def create_normalization(request, *args, **kwargs):
         req = json.loads(request.POST['request'])
 
@@ -254,6 +321,16 @@ class NormalizationManagerView(View):
         norm.normalization_type_id = req['values']['normalization_type']
         norm.version = req['values']['version']
         norm.save(using=compendium.compendium_nick_name)
+
+        Group("compendium_" + str(comp_id)).send({
+            'text': json.dumps({
+                'stream': 'normalization',
+                'payload': {
+                    'request': {'operation': 'refresh', 'values': norm.id},
+                    'data': None
+                }
+            })
+        })
 
         return HttpResponse(json.dumps({'success': True}),
                             content_type="application/json")

@@ -492,7 +492,7 @@ Ext.define('command.view.normalization.norm_manager.NormalizationList', {
             glyph: 'xf044',
             scale: 'medium',
             listeners: {
-                //click: 'onUpdateOntology'
+                click: 'onUpdateNormalization'
             },
             bind: {
                 disabled: '{!normalization_list.selection}'
@@ -507,7 +507,7 @@ Ext.define('command.view.normalization.norm_manager.NormalizationList', {
             glyph: 'xf056',
             scale: 'medium',
             listeners: {
-                //click: 'onDeleteOntology'
+                click: 'onDeleteNormalization'
             },
             bind: {
                 disabled: '{!normalization_list.selection}'
