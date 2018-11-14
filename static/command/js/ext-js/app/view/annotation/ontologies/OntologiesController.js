@@ -8,8 +8,6 @@ Ext.define('command.view.annotation.ontologies.OntologiesController', {
         var panel = me.up('#new_ontology_panel');
         var tagfield = panel.down('#ontology_tagfield');
         var field = tagfield.store.add(value);
-        console.log(tagfield.id);
-        console.log(value);
         tagfield.addValue(field);
     },
 
@@ -46,8 +44,30 @@ Ext.define('command.view.annotation.ontologies.OntologiesController', {
         ws.stream(requestEmpty.view).send(requestEmpty);
     },
 
+    onAddParentNode: function (me) {
+        var panel = me.up('new_ontology_node_panel');
+        var combo = panel.down('#parent_node_id');
+        var tagfield = panel.down('#parents_id_tagfield');
+        var value = combo.getSelection().data;
+        if (value.valid) {
+            var field = tagfield.store.add(value);
+            tagfield.addValue(field);
+        } else {
+            Ext.MessageBox.show({
+                title: 'Invalid parent node',
+                msg: 'Please select a valid parent node from the dropdown menu',
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.ERROR,
+                fn: function () {
+                }
+            });
+        }
+    },
+
     NewOntologyNodeChange: function(me, newValue, oldValue, eOpts) {
         var panel = me.up('new_ontology_node_panel');
+        var button = panel.down('#add_parent_button');
+        button.setDisabled(!newValue);
         var win = panel.up('window');
         var ws = command.current.ws;
         var operation = 'read_ontology_nodes';
@@ -108,9 +128,104 @@ Ext.define('command.view.annotation.ontologies.OntologiesController', {
         var combo = panel.down('#parent_node_id');
         var ontology = win.ontology;
         var request = panel.getRequestObject('create_ontology_node');
-        if (combo.getSelection().data.valid) {
+        request.values = form.getValues();
+        request.values.id = ontology.id;
+        if (form.isValid()) {
+            form.submit({
+                url: request.view + '/' + request.operation,
+                waitMsg: null,
+                params: {
+                    request: JSON.stringify(request)
+                },
+                success: function (f, response) {
+                    command.current.checkHttpResponse(response.response);
+                    var panel = tabpanel.down('available_ontologies');
+                    var cy_panel = tabpanel.down('cy_ontology');
+                    var grid_panel = tabpanel.down('view_ontology');
+                    panel.controller._populateOntologyGraphView(panel, cy_panel, ontology.id);
+                    panel.controller._populateOntologyNodesGrid(panel, grid_panel, ontology.id);
+                    win.close();
+                },
+                failure: function (f, response) {
+                    command.current.checkHttpResponse(response.response);
+                    win.close();
+                }
+            });
+        }
+    },
+
+    onUpdateOntologyNode: function (me) {
+        var tabpanel = me.up('ontologies');
+        var panel = tabpanel.down('available_ontologies');
+        var ontology = panel.getSelection()[0].data;
+        var height = 280 + (35 * ontology.columns.length);
+        var win = command.current.createWin({
+            xtype: 'window_new_ontology_node',
+            title: 'Update ontology node',
+            ontology: ontology,
+            height: height,
+            tabpanel: tabpanel
+        });
+        var fields = win.down('#json_field_columns');
+        fields.setVisible(true);
+        ontology.columns.forEach(function (c) {
+            fields.add(
+                {
+                    xtype: 'textfield',
+                    fieldLabel: c.text,
+                    name: c.data_index,
+                    anchor: '100%',
+                    margin: '10 10 10 5',
+                    allowBlank: true
+                }
+            )
+        });
+        var tabpanel = tabpanel.down('#ontology_tabpanel');
+        var node_id = null;
+        switch (tabpanel.getActiveTab().xtype) {
+            case 'view_ontology':
+                node_id = tabpanel.getActiveTab().getSelection()[0].id;
+                break;
+            case 'cy_ontology':
+                node_id = tabpanel.getActiveTab().cy.$(':selected').json().data.id;
+                break;
+        }
+        var requestNodeDetails = win.down('new_ontology_node_panel').getRequestObject('get_ontology_node_details');
+        requestNodeDetails.values = node_id;
+        Ext.Ajax.request({
+            url: requestNodeDetails.view + '/' + requestNodeDetails.operation,
+            params: requestNodeDetails,
+            success: function (response) {
+                if (command.current.checkHttpResponse(response)) {
+                    var resp = JSON.parse(response.responseText);
+                    win.down('form').getForm().setValues(resp.node);
+                    win.down('#parent_node_id').setValue();
+                    var tagfield = win.down('#parents_id_tagfield');
+                    if (resp.node.parents_id_tagfield) {
+                        resp.node.parents_id_tagfield.forEach(function (e) {
+                            var field = tagfield.store.add(e);
+                            tagfield.addValue(field);
+                        });
+                    }
+                }
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+            }
+        });
+        var button = win.down('#create_ontology_node_button');
+        button.setText('Update node');
+        button.clearListeners();
+        button.el.on('click', function() {
+            var panel = button.up('new_ontology_node_panel');
+            var tabpanel = win.tabpanel;
+            var form = button.up('form').getForm();
+            var combo = panel.down('#parent_node_id');
+            var ontology = win.ontology;
+            var request = panel.getRequestObject('update_ontology_node');
             request.values = form.getValues();
             request.values.id = ontology.id;
+            request.values.node_id = node_id;
             if (form.isValid()) {
                 form.submit({
                     url: request.view + '/' + request.operation,
@@ -133,23 +248,14 @@ Ext.define('command.view.annotation.ontologies.OntologiesController', {
                     }
                 });
             }
-        } else {
-            Ext.MessageBox.show({
-                title: 'Invalid parent node',
-                msg: 'Please select a valid parent node from the dropdown menu',
-                buttons: Ext.MessageBox.OK,
-                icon: Ext.MessageBox.ERROR,
-                fn: function () {
-                }
-            });
-        }
+        });
     },
 
     onNewOntologyNode: function (me) {
         var tabpanel = me.up('ontologies');
         var panel = tabpanel.down('available_ontologies');
         var ontology = panel.getSelection()[0].data;
-        var height = 300 + (35 * ontology.columns.length);
+        var height = 280 + (35 * ontology.columns.length);
         var win = command.current.createWin({
             xtype: 'window_new_ontology_node',
             ontology: ontology,
@@ -306,7 +412,7 @@ Ext.define('command.view.annotation.ontologies.OntologiesController', {
                             }
                         ],
                         layout: {
-                            name: 'breadthfirst',
+                            name: 'circle',
                             fit: false,
                             directed: true,
                             circle: false,

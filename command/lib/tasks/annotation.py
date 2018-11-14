@@ -6,22 +6,70 @@ import os
 
 import celery
 from channels import Channel, Group
+from django.contrib.auth.models import User
 
 from command.lib.anno.annotation_parser import BaseAnnotationParser
 from command.lib.db.admin.compendium_database import CompendiumDatabase
 from command.lib.db.compendium.bio_feature import BioFeature
 from command.lib.db.compendium.bio_feature_annotation import BioFeatureAnnotation
+from command.lib.db.compendium.message_log import MessageLog
 from command.lib.db.compendium.ontology import Ontology
 from command.lib.db.compendium.ontology_node import OntologyNode
+from command.lib.utils.message import Message
 from command.lib.utils.queryset_iterator import chunks
 
 
 class AnnotationCallbackTask(celery.Task):
     def on_success(self, retval, task_id, args, kwargs):
-        pass
+        user_id, compendium_id, ontology_id, filename, file_type, channel_name, view, operation = args
+
+        channel = Channel(channel_name)
+        compendium = CompendiumDatabase.objects.get(id=compendium_id)
+
+        log = MessageLog()
+        log.title = "Biological feature annotation"
+        log.message = "Status: success, Task: " + task_id + ", User: " + User.objects.get(
+            id=user_id).username
+        log.source = log.SOURCE[1][0]
+        log.save(using=compendium.compendium_nick_name)
+
+        message = Message(type='info', title=log.title, message='Annotation has been correctly imported')
+        message.send_to(channel)
+
+        Group("compendium_" + str(compendium_id)).send({
+            'text': json.dumps({
+                'stream': view,
+                'payload': {
+                    'request': {'operation': 'refresh'},
+                    'data': None
+                }
+            })
+        })
 
     def on_failure(self, exc, task_id, args, kwargs, einfo):
-        pass
+        user_id, compendium_id, ontology_id, filename, file_type, channel_name, view, operation = args
+        channel = Channel(channel_name)
+        compendium = CompendiumDatabase.objects.get(id=compendium_id)
+
+        log = MessageLog()
+        log.title = "Biological feature annotation"
+        log.message = "Status: error, Task: " + task_id + ", User: " + User.objects.get(
+            id=user_id).username + ", Error: " + str(exc)
+        log.source = log.SOURCE[1][0]
+        log.save(using=compendium.compendium_nick_name)
+
+        message = Message(type='error', title='Error', message=str(exc))
+        message.send_to(channel)
+
+        Group("compendium_" + str(compendium_id)).send({
+            'text': json.dumps({
+                'stream': view,
+                'payload': {
+                    'request': {'operation': 'refresh'},
+                    'data': None
+                }
+            })
+        })
 
 
 @celery.task(base=AnnotationCallbackTask, bind=True)

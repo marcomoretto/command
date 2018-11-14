@@ -26,6 +26,8 @@ class OntologyHelper:
             nodes_qr = OntologyNode.objects.using(self.compendium).filter(ontology=ontology, id__in=node_ids)
             edges_qr = OntologyEdge.objects.using(self.compendium).filter(Q(source_id__in=node_ids) | Q(target_id__in=node_ids))
             node_ids = list(set([y for x in edges_qr.values_list('source', 'target') for y in x]))
+            edges_qr = OntologyEdge.objects.using(self.compendium).filter(
+                Q(source_id__in=node_ids) & Q(target_id__in=node_ids))
         for e in edges_qr:
             edges.append({'data': {
                 'id': e.id,

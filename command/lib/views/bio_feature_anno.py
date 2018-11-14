@@ -1,7 +1,7 @@
 import json
 import os
 
-from channels import Channel
+from channels import Channel, Group
 from django.db.models import Q
 from django.http import HttpResponse
 from django.views import View
@@ -14,6 +14,7 @@ from command.lib.db.compendium.bio_feature_annotation import BioFeatureAnnotatio
 from command.lib.db.compendium.ontology import Ontology
 from command.lib.tasks import annotation
 from command.lib.utils.decorators import forward_exception_to_channel, forward_exception_to_http
+from command.lib.utils.message import Message
 
 
 class BioFeatureAnnoView(View):
@@ -26,6 +27,34 @@ class BioFeatureAnnoView(View):
         method = getattr(self, operation)
         return method(request, *args, **kwargs)
 
+    @staticmethod
+    @forward_exception_to_http
+    def delete_bio_feature_annotation(request, *args, **kwargs):
+        req = request.POST
+
+        comp_id = req['compendium_id']
+        view = req['view']
+        channel_name = request.session['channel_name']
+        operation = req['operation']
+        compendium = CompendiumDatabase.objects.get(id=comp_id)
+
+        BioFeatureAnnotation.objects.using(compendium.compendium_nick_name).all().delete()
+
+        message = Message(type='info', title='Annotation', message='Biological feature annotation has been deleted')
+        message.send_to(Channel(channel_name))
+
+        Group("compendium_" + str(comp_id)).send({
+            'text': json.dumps({
+                'stream': view,
+                'payload': {
+                    'request': {'operation': 'refresh'},
+                    'data': None
+                }
+            })
+        })
+
+        return HttpResponse(json.dumps({'success': True}),
+                            content_type="application/json")
 
     @staticmethod
     @forward_exception_to_http

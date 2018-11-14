@@ -19,7 +19,6 @@ Ext.define('command.view.annotation.ontologies.NewOntologyNode', {
     autoShow: true,
     modal: true,
     width: 400,
-    height: 300,
     constrain: true,
 
     defaults: {
@@ -29,7 +28,8 @@ Ext.define('command.view.annotation.ontologies.NewOntologyNode', {
 
     items: [
         {
-            xtype: 'new_ontology_node_panel'
+            xtype: 'new_ontology_node_panel',
+            autoHeight: true
         }
     ]
 });
@@ -53,7 +53,7 @@ Ext.define('command.view.annotation.ontologies.NewOntologyNodePanel', {
         getRequestObject: 'RequestMixin'
     },
 
-    layout: 'fit',
+    layout: 'auto',
 
     command_view: 'ontologies',
 
@@ -66,7 +66,7 @@ Ext.define('command.view.annotation.ontologies.NewOntologyNodePanel', {
             margin: '10 10 10 5',
             allowBlank: false,
             fieldLabel: 'Node id',
-            name: 'node_id',
+            name: 'original_id',
             emptyText: 'ID'
         }, {
             xtype: 'textfield',
@@ -75,7 +75,8 @@ Ext.define('command.view.annotation.ontologies.NewOntologyNodePanel', {
             allowBlank: true,
             fieldLabel: 'Edge type',
             name: 'edge_type',
-            emptyText: 'is_a'
+            emptyText: 'is_a',
+            hidden: true,
         }, {
             xtype: 'checkboxfield',
             anchor: '100%',
@@ -84,27 +85,63 @@ Ext.define('command.view.annotation.ontologies.NewOntologyNodePanel', {
             name      : 'edge_directed',
             inputValue: '1',
             id        : 'edge_directed',
-            checked: true
+            checked: true,
+            hidden: true,
         }, {
-            xtype: 'combobox',
-            fieldLabel: 'Parent node',
-            displayField: 'original_id',
-            valueField: 'id',
+            xtype: 'form',
+            itemId: 'add_parent_id',
+            layout: {
+                type: 'hbox',
+                pack: 'start',
+                align: 'stretch'
+            },
             anchor: '100%',
             margin: '10 10 10 5',
+            items: [{
+                xtype: 'combobox',
+                fieldLabel: 'Parent node',
+                displayField: 'original_id',
+                valueField: 'id',
+                queryMode: 'local',
+                typeAhead: true,
+                allowBlank: true,
+                editable: true,
+                lastQuery: '',
+                reference: 'parent_node_id',
+                name: 'parent_node_id',
+                itemId: 'parent_node_id',
+                store: Ext.create('command.store.OntologyNodes'),
+                listeners: {
+                    buffer: 50,
+                    afterrender: 'NewOntologyNodeParentAfterRender',
+                    change: 'NewOntologyNodeChange'
+                }
+            }, {
+                xtype: 'button',
+                text: 'Add',
+                itemId: 'add_parent_button',
+                disabled: true,
+                margin: '0 0 0 20',
+                listeners: {
+                    click: 'onAddParentNode'
+                }
+            }]
+        }, {
+            xtype: 'tagfield',
+            anchor: '100%',
+            margin: '10 10 10 5',
+            name: 'parents_id_tagfield',
+            itemId: 'parents_id_tagfield',
+            store:  Ext.create('Ext.data.Store', {
+                fields: ['id','original_id'],
+                data: []
+            }),
+            fieldLabel: 'Parents',
+            displayField: 'original_id',
+            valueField: 'id',
             queryMode: 'local',
-            typeAhead: true,
-            allowBlank: true,
-            editable: true,
-            lastQuery: '',
-            name: 'parent_node_id',
-            itemId: 'parent_node_id',
-            store: Ext.create('command.store.OntologyNodes'),
-            listeners: {
-                buffer: 50,
-                afterrender: 'NewOntologyNodeParentAfterRender',
-                change: 'NewOntologyNodeChange'
-            }
+            filterPickList: true,
+            hideTrigger: true
         }, {
             xtype: 'fieldset',
             title: 'Fields',
@@ -620,9 +657,9 @@ Ext.define('command.view.annotation.ontologies.Ontologies', {
                 },
                 glyph: 'xf044',
                 scale: 'medium',
-                /*listeners: {
-                    click: 'onUpdateGroup'
-                },*/
+                listeners: {
+                    click: 'onUpdateOntologyNode'
+                },
                 disabled: true
             }, {
                 xtype: 'button',

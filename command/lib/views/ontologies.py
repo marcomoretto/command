@@ -186,23 +186,15 @@ class OntologiesView(View):
         operation = req['operation']
         compendium = CompendiumDatabase.objects.get(id=comp_id)
 
-        parent_node = None
-        try:
-            parent_node = OntologyNode.objects.using(compendium.compendium_nick_name).get(
-                Q(ontology_id=req['values']['id']) &
-                Q(id=req['values']['parent_node_id'])
-            )
-        except Exception as e:
-            pass
-
         new_node = OntologyNode()
         new_node.ontology_id = req['values']['id']
-        new_node.original_id = req['values']['node_id']
+        new_node.original_id = req['values']['original_id']
         node_json = dict(req['values'])
-        del node_json['node_id']
+        del node_json['original_id']
         del node_json['id']
         del node_json['parent_node_id']
         del node_json['edge_type']
+        del node_json['parents_id_tagfield']
         if 'edge_directed' in node_json:
             del node_json['edge_directed']
         for k, v in node_json.items():
@@ -212,17 +204,94 @@ class OntologiesView(View):
         new_node.json = node_json
         new_node.save(using=compendium.compendium_nick_name)
 
-        if parent_node:
-            new_edge = OntologyEdge()
-            new_edge.ontology_id = req['values']['id']
-            new_edge.source = parent_node
-            new_edge.target = new_node
-            new_edge.is_directed = 'edge_directed' in req['values'] and req['values']['edge_directed'] == '1'
-            new_edge.edge_type = req['values']['edge_type']
-            new_edge.save(using=compendium.compendium_nick_name)
+        for parent_id in req['values']['parents_id_tagfield']:
+            try:
+                parent_node = OntologyNode.objects.using(compendium.compendium_nick_name).get(
+                    Q(ontology_id=req['values']['id']) &
+                    Q(id=parent_id)
+                )
+                new_edge = OntologyEdge()
+                new_edge.ontology_id = req['values']['id']
+                new_edge.source = parent_node
+                new_edge.target = new_node
+                new_edge.is_directed = True
+                new_edge.edge_type = 'is_a'
+                new_edge.save(using=compendium.compendium_nick_name)
+            except Exception as e:
+                pass
 
         return HttpResponse(json.dumps({'success': True}),
                      content_type="application/json")
+
+    @staticmethod
+    @forward_exception_to_http
+    def update_ontology_node(request, *args, **kwargs):
+        req = json.loads(request.POST['request'])
+
+        comp_id = req['compendium_id']
+        channel_name = request.session['channel_name']
+        view = req['view']
+        compendium = CompendiumDatabase.objects.get(id=comp_id)
+
+        node = OntologyNode.objects.using(compendium.compendium_nick_name).get(id=req['values']['node_id'])
+        node.original_id = req['values']['original_id']
+        node_json = dict(req['values'])
+        del node_json['original_id']
+        del node_json['node_id']
+        del node_json['id']
+        del node_json['parent_node_id']
+        del node_json['edge_type']
+        del node_json['parents_id_tagfield']
+        if 'edge_directed' in node_json:
+            del node_json['edge_directed']
+        for k, v in node_json.items():
+            s = v.split(',')
+            if len(s) > 1:
+                node_json[k] = s
+        node.json = node_json
+        node.save(using=compendium.compendium_nick_name)
+
+        for parent_id in req['values']['parents_id_tagfield']:
+            try:
+                parent_node = OntologyNode.objects.using(compendium.compendium_nick_name).get(
+                    Q(ontology_id=req['values']['id']) &
+                    Q(id=parent_id)
+                )
+                OntologyEdge.objects.using(compendium.compendium_nick_name).filter(target=node).delete()
+                new_edge = OntologyEdge()
+                new_edge.ontology_id = req['values']['id']
+                new_edge.source = parent_node
+                new_edge.target = node
+                new_edge.is_directed = True
+                new_edge.edge_type = 'is_a'
+                new_edge.save(using=compendium.compendium_nick_name)
+            except Exception as e:
+                pass
+
+        return HttpResponse(json.dumps({'success': True}),
+                            content_type="application/json")
+
+    @staticmethod
+    @forward_exception_to_http
+    def get_ontology_node_details(request, *args, **kwargs):
+        values = json.loads(request.POST['values'])
+
+        comp_id = request.POST['compendium_id']
+        channel_name = request.session['channel_name']
+        view = request.POST['view']
+        compendium = CompendiumDatabase.objects.get(id=comp_id)
+
+        on = OntologyNode.objects.using(compendium.compendium_nick_name).get(id=values)
+        node = {**on.to_dict(), **on.json}
+        for edge in OntologyEdge.objects.using(compendium.compendium_nick_name).filter(target=on):
+            if 'parents_id_tagfield' not in node:
+                node['parents_id_tagfield'] = []
+            parent = edge.source.to_dict()
+            parent['valid'] = True
+            node['parents_id_tagfield'].append(parent)
+
+        return HttpResponse(json.dumps({'success': True, 'node': node}),
+                            content_type="application/json")
 
 
     @staticmethod

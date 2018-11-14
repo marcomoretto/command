@@ -16,6 +16,7 @@ Ext.define('command.view.option.MessageLogController', {
                 me.store.loadPage(action.request.page, {
                     start: 0
                 });
+                me.setLoading(false);
             }
             if (action.request.operation == 'refresh') {
                 ws.stream(request.view).send(request);

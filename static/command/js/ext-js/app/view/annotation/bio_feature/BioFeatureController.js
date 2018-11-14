@@ -112,7 +112,28 @@ Ext.define('command.view.annotation.bio_feature.BioFeatureController', {
     },
 
     onDeleteBiologicalFeatureAnnotation: function (me) {
-
+        var request = me.up('grid').getRequestObject('delete_bio_feature_annotation');
+        var comp = JSON.parse(localStorage.getItem("current_compendium"));
+        Ext.MessageBox.show({
+            title: 'Delete annotation',
+            msg: 'Are you sure you want to delete the whole annotation?',
+            buttons: Ext.MessageBox.YESNOCANCEL,
+            icon: Ext.MessageBox.QUESTION,
+            fn: function (a) {
+                if (a == 'yes') {
+                    Ext.Ajax.request({
+                        url: request.view + '/' + request.operation,
+                        params: request,
+                        success: function (response) {
+                            command.current.checkHttpResponse(response);
+                        },
+                        failure: function (response) {
+                            console.log('Server error', reponse);
+                        }
+                    })
+                }
+            }
+        });
     }
 
 
