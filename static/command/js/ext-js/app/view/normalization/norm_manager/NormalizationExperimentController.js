@@ -332,7 +332,7 @@ Ext.define('command.view.normalization.norm_manager.NormalizationExperimentContr
             if (conditionNodes.length == 2) {
                 linkConditionButton.setDisabled(false);
             }
-            if (sampleNodes.length > 1) {
+            if (sampleNodes.length > 0) {
                 newConditionButton.setDisabled(false);
             }
             if (sampleNodes.length > 0) {

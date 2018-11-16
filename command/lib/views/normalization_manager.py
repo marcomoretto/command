@@ -10,7 +10,8 @@ from command.lib.db.compendium.experiment import Experiment
 from command.lib.db.compendium.normalization import Normalization
 from command.lib.db.compendium.normalization_experiment import NormalizationExperiment
 from command.lib.db.compendium.normalization_type import NormalizationType
-from command.lib.utils.decorators import forward_exception_to_channel, forward_exception_to_http
+from command.lib.utils.decorators import forward_exception_to_channel, forward_exception_to_http, check_permission
+from command.lib.utils.permission import Permission
 
 
 class NormalizationManagerView(View):
@@ -25,6 +26,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_channel
+    @check_permission(Permission.NORMALIZATION_MANAGER)
     def read_experiments(channel_name, view, request, user):
         channel = Channel(channel_name)
         compendium = CompendiumDatabase.objects.get(id=request['compendium_id'])
@@ -59,6 +61,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_NORMALIZATION)
     def update_use_experiment(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -87,6 +90,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_NORMALIZATION)
     def remove_experiment(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -121,6 +125,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_NORMALIZATION)
     def remove_all_experiment(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -155,6 +160,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_NORMALIZATION)
     def add_all_experiment(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -199,6 +205,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_NORMALIZATION)
     def add_experiment(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -239,6 +246,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.DELETE_NORMALIZATION)
     def remove_normalization(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -274,6 +282,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_NORMALIZATION)
     def update_normalization(request, *args, **kwargs):
         req = json.loads(request.POST['request'])
 
@@ -306,6 +315,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.CREATE_NORMALIZATION)
     def create_normalization(request, *args, **kwargs):
         req = json.loads(request.POST['request'])
 
@@ -346,6 +356,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_channel
+    @check_permission(Permission.NORMALIZATION_MANAGER)
     def read_normalization_experiments(channel_name, view, request, user):
         channel = Channel(channel_name)
         compendium = CompendiumDatabase.objects.get(id=request['compendium_id'])
@@ -392,6 +403,7 @@ class NormalizationManagerView(View):
 
     @staticmethod
     @forward_exception_to_channel
+    @check_permission(Permission.NORMALIZATION_MANAGER)
     def read_normalizations(channel_name, view, request, user):
         channel = Channel(channel_name)
         compendium = CompendiumDatabase.objects.get(id=request['compendium_id'])

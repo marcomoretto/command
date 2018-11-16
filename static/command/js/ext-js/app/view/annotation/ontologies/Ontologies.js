@@ -55,7 +55,7 @@ Ext.define('command.view.annotation.ontologies.NewOntologyNodePanel', {
 
     layout: 'auto',
 
-    command_view: 'ontologies',
+    command_view: 'ontology_nodes',
 
     items: [{
         xtype: 'form',

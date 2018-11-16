@@ -288,7 +288,6 @@ Ext.define('command.view.annotation.ontologies.OntologiesController', {
         var win = command.current.createWin({
             xtype: 'window_new_ontology'
         });
-        console.log(me.id);
         var panel = me.up('available_ontologies');
         var ontology = panel.getSelection()[0].data;
         var button = win.down('#create_ontology_button');
@@ -332,7 +331,8 @@ Ext.define('command.view.annotation.ontologies.OntologiesController', {
                         }
                     },
                     failure: function (f, response) {
-
+                        command.current.checkHttpResponse(response.response);
+                        win.close();
                     }
                 });
             }

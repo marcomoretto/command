@@ -1,21 +1,21 @@
 Ext.define('command.store.Privileges', {
-    extend: 'Ext.data.Store',
+    extend: 'Ext.data.TreeStore',
 
-    alias: 'store.privileges',
+    alias: 'store.script_tree',
+
     model: 'command.model.Privileges',
-
-    autoLoad: false,
-
-    remoteSort: false,
-
-    remoteFilter: true,
 
     proxy: {
         type: 'memory',
         reader: {
-            type: 'json',
-            rootProperty: 'privileges',
-            totalProperty: 'total'
+            type: 'json'
         }
-    }
+    },
+
+    root: {
+        text: 'root',
+        leaf: false
+    },
+
+    rootVisible: false
 });

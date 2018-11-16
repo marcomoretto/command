@@ -13,8 +13,9 @@ from command.lib.db.compendium.bio_feature import BioFeature
 from command.lib.db.compendium.bio_feature_annotation import BioFeatureAnnotation
 from command.lib.db.compendium.ontology import Ontology
 from command.lib.tasks import annotation
-from command.lib.utils.decorators import forward_exception_to_channel, forward_exception_to_http
+from command.lib.utils.decorators import forward_exception_to_channel, forward_exception_to_http, check_permission
 from command.lib.utils.message import Message
+from command.lib.utils.permission import Permission
 
 
 class BioFeatureAnnoView(View):
@@ -29,6 +30,7 @@ class BioFeatureAnnoView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.DELETE_BIO_FEATURE_ANNOTATION)
     def delete_bio_feature_annotation(request, *args, **kwargs):
         req = request.POST
 
@@ -58,6 +60,7 @@ class BioFeatureAnnoView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.IMPORT_BIO_FEATURE_ANNOTATION)
     def upload_bio_feature_annotation(request, *args, **kwargs):
         req = json.loads(request.POST['request'])
 

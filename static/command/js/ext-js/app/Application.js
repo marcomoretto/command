@@ -206,6 +206,7 @@ Ext.define('command.Application', {
             main.getController().openPanel(panel, this.panel_glyph[panel], params);
         } else {
             this.showMessage('permission_error', '', '');
+            main.controller.redirectTo('#view/welcome', true);
         }
     },
 

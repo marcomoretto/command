@@ -41,11 +41,20 @@ def check_permission(perm_codename):
         @functools.wraps(func)
         def func_wrapper(*args, **kwargs):
             request = args[0]
-            if request.user.is_staff and request.user.is_superuser:
+            if type(request) == str:
+                user = args[-1]
+                request = args[-2]
+                comp_id = request['compendium_id']
+            else:
+                user = request.user
+                if 'compendium_id' in request.POST:
+                    comp_id = request.POST['compendium_id']
+                else:
+                    comp_id = json.loads(request.POST['request'])['compendium_id']
+            if user.is_staff and user.is_superuser:
                 return func(*args, **kwargs)
-            comp_id = request.POST['compendium_id']
             compendium = CompendiumDatabase.objects.get(id=comp_id)
-            for g in request.user.groups.all():
+            for g in user.groups.all():
                 for p in g.permissions.all():
                     if p.content_type.app_label == compendium.compendium_nick_name and p.codename == perm_codename:
                         return func(*args, **kwargs)

@@ -51,7 +51,7 @@ class Dispatcher:
         MessageLogView: ['message_log'],
         ExportDataView: ['export_data'],
         TestView: ['test'],
-        OntologiesView: ['ontologies', 'view_ontology', 'window_new_ontology', 'window_new_ontology_node'],
+        OntologiesView: ['ontologies', 'view_ontology', 'window_new_ontology', 'window_new_ontology_node', 'ontology_nodes'],
         JupyterNotebookView: ['jupyter_notebook', 'notebook_tree'],
         NormalizationManagerView: ['normalization_manager', 'normalization', 'window_new_normalization',
                                    'window_add_experiment', 'win_normalization_manager'],
@@ -72,7 +72,12 @@ class GroupCompendiumPermission:
         CommandPermission.PARSE_EXPERIMENT: [ParseExperimentView],
         CommandPermission.DOWNLOAD_UPLOAD_EXPERIMENT: [ExperimentPublicView],
         CommandPermission.REPORTER_MAPPING: [MicroarrayPlatformView],
-        CommandPermission.ADD_BIOFEATURE: [BioFeatureGeneView]
+        CommandPermission.ADD_BIOFEATURE: [BioFeatureGeneView],
+        CommandPermission.ONTOLOGIES: [OntologiesView],
+        CommandPermission.JUPYTER_NOTEBOOK: [JupyterNotebookView],
+        CommandPermission.NORMALIZATION_MANAGER: [NormalizationManagerView],
+        CommandPermission.VIEW_EXPERIMENT_NORMALIZATION: [NormalizationExperimentView],
+        CommandPermission.BIO_FEATURE_ANNOTATION: [BioFeatureAnnoView]
     })
 
     _default_view = [
@@ -125,13 +130,22 @@ class GroupCompendiumPermission:
             p = Permission()
             p.content_type = ct
             p.codename = permission_type
-            p.name = CommandPermission.names[permission_type]
+            p.name = CommandPermission.get_name(permission_type)
             p.save()
         return p
 
     @staticmethod
-    def get_all_permissions():
-        return [{'codename': k, 'name': v, 'selected': False} for k, v in CommandPermission.names.items()]
+    def get_all_permissions(checked=[]):
+        return [{
+            'text': k,
+            'leaf': False,
+            'checked': len(set(CommandPermission.names[k]) - set(checked)) == 0,
+            'children': [{
+                'codename': x,
+                'text': y,
+                'checked': x in checked,
+                'leaf': True
+            } for x, y in v.items()]} for k, v in CommandPermission.names.items()]
 
 
 @channel_session_user_from_http

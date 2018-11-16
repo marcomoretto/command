@@ -13,7 +13,8 @@ from command.lib.db.compendium.ontology import Ontology
 from command.lib.db.compendium.ontology_edge import OntologyEdge
 from command.lib.db.compendium.ontology_node import OntologyNode
 from command.lib.tasks import ontology
-from command.lib.utils.decorators import forward_exception_to_http, forward_exception_to_channel
+from command.lib.utils.decorators import forward_exception_to_http, forward_exception_to_channel, check_permission
+from command.lib.utils.permission import Permission
 
 
 class OntologiesView(View):
@@ -127,6 +128,7 @@ class OntologiesView(View):
 
     @staticmethod
     @forward_exception_to_channel
+    @check_permission(Permission.ONTOLOGIES)
     def read_ontologies(channel_name, view, request, user):
         channel = Channel(channel_name)
         compendium = CompendiumDatabase.objects.get(id=request['compendium_id'])
@@ -162,6 +164,7 @@ class OntologiesView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_ONTOLOGY)
     def delete_ontology_node(request, *args, **kwargs):
         node_id = request.POST['values']
         comp_id = request.POST['compendium_id']
@@ -177,6 +180,7 @@ class OntologiesView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_ONTOLOGY)
     def create_ontology_node(request, *args, **kwargs):
         req = json.loads(request.POST['request'])
 
@@ -225,6 +229,7 @@ class OntologiesView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_ONTOLOGY)
     def update_ontology_node(request, *args, **kwargs):
         req = json.loads(request.POST['request'])
 
@@ -316,6 +321,7 @@ class OntologiesView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.DELETE_ONTOLOGY)
     def delete_ontology(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -341,6 +347,7 @@ class OntologiesView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_ONTOLOGY)
     def update_ontology(request, *args, **kwargs):
         req = json.loads(request.POST['request'])
 
@@ -373,6 +380,7 @@ class OntologiesView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.CREATE_ONTOLOGY)
     def create_ontology(request, *args, **kwargs):
         req = json.loads(request.POST['request'])
 

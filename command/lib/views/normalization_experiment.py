@@ -12,7 +12,8 @@ from command.lib.db.compendium.normalization_design_group import NormalizationDe
 from command.lib.db.compendium.normalization_design_sample import NormalizationDesignSample
 from command.lib.db.compendium.normalization_experiment import NormalizationExperiment
 from command.lib.db.compendium.normalization_type import NormalizationType
-from command.lib.utils.decorators import forward_exception_to_channel, forward_exception_to_http
+from command.lib.utils.decorators import forward_exception_to_channel, forward_exception_to_http, check_permission
+from command.lib.utils.permission import Permission
 
 
 class NormalizationExperimentView(View):
@@ -27,6 +28,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_channel
+    @check_permission(Permission.VIEW_EXPERIMENT_NORMALIZATION)
     def read_normalization_design_group(channel_name, view, request, user):
         channel = Channel(channel_name)
         compendium = CompendiumDatabase.objects.get(id=request['compendium_id'])
@@ -70,6 +72,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_EXPERIMENTAL_DESIGN)
     def delete_sample_from_group(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -103,6 +106,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_EXPERIMENTAL_DESIGN)
     def update_sample_group(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -130,6 +134,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_EXPERIMENTAL_DESIGN)
     def update_node_positions(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -149,6 +154,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_EXPERIMENTAL_DESIGN)
     def delete_condition_sample_group(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -172,6 +178,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_EXPERIMENTAL_DESIGN)
     def create_condition_sample_group(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -202,6 +209,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_EXPERIMENTAL_DESIGN)
     def remove_normalization_design_group(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -228,6 +236,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_EXPERIMENTAL_DESIGN)
     def link_conditions(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -270,6 +279,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_EXPERIMENTAL_DESIGN)
     def unlink_conditions(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -305,6 +315,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.VIEW_EXPERIMENT_NORMALIZATION)
     def select_design_group(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -320,6 +331,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.MODIFY_EXPERIMENTAL_DESIGN)
     def create_sample_group(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -374,6 +386,7 @@ class NormalizationExperimentView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.VIEW_EXPERIMENT_NORMALIZATION)
     def get_experiment_details(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 

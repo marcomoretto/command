@@ -10,8 +10,10 @@ from django.views import View
 from command.lib import parsing_scripts
 from command.lib.db.admin.admin_options import AdminOptions
 from command.lib.utils import file_system
-from command.lib.utils.decorators import forward_exception_to_http, forward_exception_to_channel
+from command.lib.utils.decorators import forward_exception_to_http, forward_exception_to_channel, check_permission
 import urllib.parse
+
+from command.lib.utils.permission import Permission
 from cport import settings
 
 
@@ -27,6 +29,7 @@ class JupyterNotebookView(View):
 
     @staticmethod
     @forward_exception_to_channel
+    @check_permission(Permission.JUPYTER_NOTEBOOK)
     def read_notebook_tree(channel_name, view, request, user):
         channel = Channel(channel_name)
 
@@ -50,6 +53,7 @@ class JupyterNotebookView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.JUPYTER_NOTEBOOK)
     def update_notebook_file_folder(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -80,6 +84,7 @@ class JupyterNotebookView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.JUPYTER_NOTEBOOK)
     def delete_notebook_file_folder(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
 
@@ -110,6 +115,7 @@ class JupyterNotebookView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.JUPYTER_NOTEBOOK)
     def create_notebook_file_folder(request, *args, **kwargs):
         values = json.loads(request.POST['values'])
         comp_id = request.POST['compendium_id']
@@ -151,6 +157,7 @@ class JupyterNotebookView(View):
 
     @staticmethod
     @forward_exception_to_http
+    @check_permission(Permission.JUPYTER_NOTEBOOK)
     def get_notebook_ip(request, *args, **kwargs):
         token = settings.JUPYTER_TOKEN
 
