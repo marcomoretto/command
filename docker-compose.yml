@@ -130,13 +130,11 @@ services:
     ports:
       - "8888:8888"
     volumes_from:
-      - web
+      - web_data
     links:
       - web:web
       - postgres:postgres
     env_file: env
-    volumes_from:
-      - web_data
     volumes:
       - .:/app
     networks:
