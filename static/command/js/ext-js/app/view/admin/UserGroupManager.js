@@ -511,35 +511,19 @@ Ext.define('command.view.admin.Permission', {
             layout: 'fit',
             margin: '0 10 0 0',
             columnLines: false,
-            selType: 'checkboxmodel',
             disabled: true,
-            columns: [{
-                text: 'ID',
-                width: '10%',
-                sortable: true,
-                dataIndex: 'id',
-                hidden: true
-            }, {
-                text: 'Permission',
-                width: '80%',
-                sortable: true,
-                dataIndex: 'name'
-            }],
-            listeners: {
-                select: 'onPermissionSelection',
-                deselect: 'onPermissionDeselection'
-            }
+            rootVisible: false
         }
     ]
 });
 
 Ext.define('command.view.admin.Privileges', {
-    extend: 'Ext.grid.Panel',
+    extend: 'Ext.tree.Panel',
     xtype: 'privileges',
     title: 'Privileges',
 
     requires: [
-        'Ext.panel.Panel',
+        'Ext.tree.Panel',
 
         'command.store.Privileges',
         'command.model.Privileges'
@@ -557,24 +541,13 @@ Ext.define('command.view.admin.Privileges', {
         getRequestObject: 'RequestMixin'
     },
 
-    columns: [{
-        text: 'ID',
-        flex: 1,
-        sortable: true,
-        dataIndex: 'id'
-    }, {
-        text: 'Name',
-        flex: 1,
-        sortable: true,
-        dataIndex: 'name'
-    }],
-
     listeners: {
         expand: function (p, eOpts ) {
             // Hack to prevent store to crash when reloaded without having focus
             p.getView().refresh();
         },
-        afterrender: 'onPrivilegesAfterRender'
+        afterrender: 'onPrivilegesAfterRender',
+        checkchange: 'onPrivilegesCheckChange'
     },
 
     initComponent: function() {

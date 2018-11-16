@@ -34,15 +34,21 @@ Ext.define('command.Application', {
     version: null,
 
     panel_glyph: {
+        'jupyter_notebook': 'f12b',
+        'ontologies': 'xf0e8',
+        'test': 'xf11b',
         'parse_experiment': 'xf120',
         'import_experiment_public': 'xf0c3',
-        'compendia_manager': 'xf00a',
+        'compendia_manager': 'xf0ad',
         'user_group_manager': 'xf0c0',
-        'admin_options': 'xf0ca',
+        'admin_options': 'xf142',
         'experiments': 'xf0c3',
         'platform_manager': 'f21a',
         'message_log': 'f086',
         'bio_feature': 'f1fb',
+        'bio_feature_annotation': 'f06c',
+        'normalization_manager': 'f1fe',
+        'normalization_experiment': 'f080',
         'welcome': 'f259'
     },
 
@@ -66,7 +72,8 @@ Ext.define('command.Application', {
     },
 
     panel_multi_instances: [
-        'parse_experiment'
+        'parse_experiment',
+        'normalization_experiment'
     ],
 
     admin_panels: [
@@ -94,6 +101,31 @@ Ext.define('command.Application', {
         }
     },
 
+    getExperimentGlyph: function(cell, value, description) {
+        switch (value) {
+            case 'experiment_new':
+                cell.items[0].glyph = command.current.experiment_status_glyph['new'];
+                cell.items[0].tooltip = description;
+                break;
+            case 'experiment_downloading':
+                cell.items[0].glyph = command.current.experiment_status_glyph['downloading'];
+                cell.items[0].tooltip = description;
+                break;
+            case 'experiment_data_ready':
+                cell.items[0].glyph = command.current.experiment_status_glyph['data_ready'];
+                cell.items[0].tooltip = description;
+                break;
+            case 'experiment_raw_data_imported':
+                cell.items[0].glyph = command.current.experiment_status_glyph['raw_data'];
+                cell.items[0].tooltip = description;
+                break;
+            case 'experiment_excluded':
+                cell.items[0].glyph = command.current.experiment_status_glyph['excluded'];
+                cell.items[0].tooltip = description;
+                break;
+        }
+    },
+
     createWin: function(config) {
         var panel = config.xtype;
         var views = JSON.parse(localStorage.getItem("views"));
@@ -101,7 +133,7 @@ Ext.define('command.Application', {
         console.log(views, compendium, panel);
         if ((compendium && views[compendium.compendium_nick_name].indexOf(panel) != -1) ||
             (views['no_compendium'].indexOf(panel) != -1)) {
-            Ext.create(config);
+            return Ext.create(config);
         } else {
             this.showMessage('permission_error', '', '');
         }
@@ -156,7 +188,6 @@ Ext.define('command.Application', {
     },
 
     checkHttpResponse: function (message) {
-        console.log('HTTP');
         var response = JSON.parse(message.responseText);
         if (!response.success) {
             this.showMessage(response.type, response.title, response.message);
@@ -175,6 +206,7 @@ Ext.define('command.Application', {
             main.getController().openPanel(panel, this.panel_glyph[panel], params);
         } else {
             this.showMessage('permission_error', '', '');
+            main.controller.redirectTo('#view/welcome', true);
         }
     },
 
@@ -302,6 +334,43 @@ Ext.define('command.Application', {
                 }
             }]
         }]
+        });
+        var main = Ext.create('Ext.panel.Panel', {
+            title: 'Select State(s)',
+            bodyPadding: 5,
+            frame: true,
+            width: 600,
+            layout: 'form',
+            viewModel: {},
+
+            items: [{
+                xtype: 'displayfield',
+                fieldLabel: 'Selected States',
+                bind: '{states.value}'
+            }, {
+                xtype: 'tagfield',
+                store:  Ext.create('Ext.data.Store', {
+                    fields: ['id','show'],
+                    data: [
+                        {id: 0, show: 'Battlestar Galactica'},
+                        {id: 1, show: 'Doctor Who'},
+                        {id: 2, show: 'Farscape'},
+                        {id: 3, show: 'Firefly'},
+                        {id: 4, show: 'Star Trek'},
+                        {id: 5, show: 'Star Wars: Christmas Special'}
+                    ]
+                    }),
+                fieldLabel: 'Select a Show',
+                displayField: 'show',
+                valueField: 'id',
+                queryMode: 'local',
+                filterPickList: true
+            }],
+            buttons: [{
+                text: 'OK'
+            }, {
+                text: 'Cancel'
+            }]
         });
         /*var main = Ext.create('Ext.panel.Panel', {
             title: 'Employee Information',
@@ -523,6 +592,7 @@ Ext.define('command.LiveFilter', {
             request.page = 1;
             request.values = me.getValues();
             console.log(request);
+            grid.setLoading(true);
             ws.stream(request.view).send(request);
         }
     }
@@ -549,6 +619,7 @@ Ext.define('command.Paging', {
             var request = grid.getRequestObject(grid.command_read_operation);
             request.page = page;
             request.values = this.getValues();
+            grid.setLoading(true);
             ws.stream(request.view).send(request);
         }
     }
@@ -577,8 +648,8 @@ Ext.define('RequestMixin', {
         if (this.store) {
             page_size = this.store.pageSize;
         }
-        if (this.columns) {
-            this.columns.forEach(function (c, i) {
+        if (this.getColumnManager && this.getColumnManager().columns) {
+            this.getColumnManager().columns.forEach(function (c, i) {
                 if (c.sortState) {
                     ordering = c.sortState;
                     ordering_value = c.dataIndex;
@@ -626,23 +697,48 @@ Ext.define('command.Grid', {
 
     command_read_operation: null,
 
-    dockedItems: [{
-        dock: 'top',
-        xtype: 'toolbar',
-        itemId: 'command_toptoolbar',
-        items: [{
-            xtype: 'command_paging',
-            itemId: 'command_paging',
-            displayInfo: true
-        }, '->', {
-            xtype: 'command_livefilter',
-            fieldLabel: 'Filter',
-            name: 'filter'
-        }]
-    }],
+    alternative_layout: false,
 
     initComponent: function() {
         this.callParent(arguments);
+        if (this.alternative_layout) {
+            this.addDocked({
+                dock: 'top',
+                xtype: 'toolbar',
+                frame: false,
+                border: false,
+                itemId: 'command_toptoolbar',
+                layout: {
+                    type: 'vbox',
+                    align: 'left',
+                    pack: 'center'
+                },
+                items: [{
+                    xtype: 'command_paging',
+                    itemId: 'command_paging',
+                    displayInfo: true
+                }, {
+                    xtype: 'command_livefilter',
+                    fieldLabel: 'Filter',
+                    name: 'filter'
+                }]
+            });
+        } else {
+            this.addDocked({
+                dock: 'top',
+                xtype: 'toolbar',
+                itemId: 'command_toptoolbar',
+                items: [{
+                    xtype: 'command_paging',
+                    itemId: 'command_paging',
+                    displayInfo: true
+                }, '->', {
+                    xtype: 'command_livefilter',
+                    fieldLabel: 'Filter',
+                    name: 'filter'
+                }]
+            });
+        }
         this.headerCt.items.each(function(c){
             c.menuDisabled = true;
         });
@@ -655,12 +751,15 @@ Ext.define('command.Grid', {
         },
         headerclick: function(ct, column, e, t, eOpts) {
             var grid = ct.up('command_grid');
+            console.log(column);
             if (!column.isCheckerHd) {
                 var ws = command.current.ws;
                 grid.store.loadData([], false);
                 var operation = grid.command_read_operation;
                 var request = grid.getRequestObject(operation);
                 request.values = this.down('command_paging').getValues();
+                request.ordering_value = column.dataIndex;
+                grid.setLoading(true);
                 ws.stream(request.view).send(request);
             }
         },
@@ -680,27 +779,31 @@ Ext.define('command.Grid', {
                         me.setLoading(false);
                         if (me.store) {
                             me.store.getProxy().setData(action.data);
+                            console.log(action.data);
                             me.store.loadPage(action.request.page, {
                                 start: 0
                             });
+                            me.setLoading(false);
                         }
                     }
                 }
                 if (action.request.operation == 'refresh') {
+                    request.values = action.request.values;
                     ws.stream(request.view).send(request);
                 }
             });
+            me.setLoading(true);
             ws.stream(request.view).send(request);
         },
         beforeshow: function ( me, eOpts ) {
             var ws = command.current.ws;
             var operation = me.command_read_operation;;
             var request = this.getRequestObject(operation);
+            me.setLoading(true);
             ws.stream(request.view).send(request);
         },
         render: function(grid) {
             var view=grid.getView();
-            console.log(view.id);
             view.tip = Ext.create('Ext.tip.ToolTip', {
                 dismissDelay: 0,
                 target: grid.el,

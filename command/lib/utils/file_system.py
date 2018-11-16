@@ -17,7 +17,7 @@ def path_hierarchy(path, base_path=None, name_filter=''):
     try:
         hierarchy['children'] = [
             path_hierarchy(os.path.join(path, contents), base_path, name_filter)
-            for contents in [e for e in os.listdir(path) if not e.startswith('__')
+            for contents in [e for e in os.listdir(path) if not e.startswith('.') and not e.startswith('__')
                              and (not os.path.isfile(os.path.join(path, e)) or name_filter in e)]
         ]
     except OSError as e:

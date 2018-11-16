@@ -98,9 +98,104 @@ Ext.define('command.view.main.Main', {
                     }]
             }
         },{
+            text: 'Annotation',
+            itemId: 'annotation_menu_item',
+            iconCls: null,
+            glyph: 'xf02b',
+            menu: {
+                items: [{
+                    text: 'Biological features',
+                    glyph: 'xf06c',
+                    iconCls: null,
+                    displayText: 'Biological features',
+                    listeners: {
+                        click: {
+                            fn: 'onAction',
+                            hash: 'view/bio_feature_annotation',
+                            glyph: 'xf06c',
+                            panel: 'bio_feature_annotation'
+                        }
+                    }
+                }, {
+                    text: 'Samples',
+                    glyph: 'f1fb',
+                    iconCls: null,
+                    displayText: 'Samples',
+                    disabled: true,
+                    /*listeners: {
+                        click: {
+                            fn: 'onAction',
+                            hash: 'view/message_log',
+                            glyph: 'f086',
+                            panel: 'message_log'
+                        }
+                    }*/
+                }, '-', {
+                    text: 'Ontologies',
+                    glyph: 'f0e8',
+                    iconCls: null,
+                    displayText: 'Ontologies',
+                    listeners: {
+                        click: {
+                            fn: 'onAction',
+                            hash: 'view/ontologies',
+                            glyph: 'f0e8',
+                            panel: 'ontologies'
+                        }
+                    }
+                }]
+            }
+        },{
+            text: 'Normalization',
+            itemId: 'normalization_menu_item',
+            iconCls: null,
+            glyph: 'f1fe',
+            menu: {
+                items: [{
+                    text: 'Normalization manager',
+                    glyph: 'f1fe',
+                    iconCls: null,
+                    displayText: 'Normalization manager',
+                    listeners: {
+                        click: {
+                            fn: 'onAction',
+                            hash: 'view/normalization_manager',
+                            glyph: 'f1fe',
+                            panel: 'normalization_manager'
+                        }
+                    }
+                }, {
+                    text: 'Jupyter notebook',
+                    glyph: 'f12b',
+                    iconCls: null,
+                    displayText: 'Jupyter notebook',
+                    listeners: {
+                        click: {
+                            fn: 'onAction',
+                            hash: 'view/jupyter_notebook',
+                            glyph: 'f12b',
+                            panel: 'jupyter_notebook'
+}
+                     }
+                }]
+            }
+        },/*{
+            text: 'Test',
+            itemId: 'test_menu_item',
+            iconCls: null,
+            glyph: 'xf11b',
+            listeners: {
+                click: {
+                    fn: 'onAction',
+                    hash: 'view/test',
+                    glyph: 'xf11b',
+                    panel: 'test'
+                }
+            }
+        },*/{
             text: 'Options',
             iconCls: null,
-            glyph: 'xf0ca',
+            glyph: 'xf142',
             menu: {
                 items: [{
                     text: 'Change compendium',
@@ -174,25 +269,25 @@ Ext.define('command.view.main.Main', {
                 },{
                     text: 'Compendium manager',
                     iconCls: null,
-                    glyph: 'xf00a',
+                    glyph: 'xf0ad',
                     displayText: 'Compendium manager',
                     listeners: {
                         click: {
                             fn: 'onAction',
                             hash: 'view/compendia_manager',
-                            glyph: 'xf00a',
+                            glyph: 'xf0ad',
                             panel: 'compendia_manager'
                         }
                     }
                 },'-', {
                     text: 'Options',
                     iconCls: null,
-                    glyph: 'xf0ca',
+                    glyph: 'xf142',
                     listeners: {
                         click: {
                             fn: 'onAction',
                             hash: 'view/admin_options',
-                            glyph: 'xf085',
+                            glyph: 'xf142',
                             panel: 'admin_options'
                         }
                     }
@@ -248,12 +343,7 @@ Ext.define('command.view.main.Main', {
     }],
 
     listeners: {
-        afterrender: function ( me, eOpts ) {
-            var compendium = JSON.parse(localStorage.getItem("current_compendium"));
-            if (!compendium) {
-                me.down('#data_collection_menu_item').disable();
-            }
-        }
+        afterrender: 'mainAfterRender'
     },
 
     initComponent: function() {

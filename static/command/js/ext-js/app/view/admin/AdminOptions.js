@@ -97,32 +97,40 @@ Ext.define('command.view.admin.AdminOptions', {
                 }
             }]
         }]
-    }/*,{
+    }, {
         xtype: 'fieldset',
-        title: 'Programs path',
+        title: 'Jupyter notebook',
         collapsible: false,
         defaults: {
-            labelWidth: 90,
+            labelWidth: 150,
             anchor: '100%',
-            layout: 'hbox'
+            layout: 'hbox',
+            margin: '5 0 0 0'
         },
         items: [{
-            xtype: 'textfield',
-            name: 'R',
-            fieldLabel: 'R',
-            allowBlank: true
-        }, {
-            xtype: 'textfield',
-            name: 'BLAST',
-            fieldLabel: 'BLAST',
-            allowBlank: true
-        }, {
-            xtype: 'textfield',
-            name: 'Kallisto',
-            fieldLabel: 'Kallisto',
-            allowBlank: true
+            xtype: 'form',
+            items: [{
+                fieldLabel: 'Jupyter Notebook server',
+                labelWidth: 150,
+                xtype: 'textfield',
+                name: 'jupyter_notebook_ip',
+                itemId: 'jupyter_notebook_ip',
+                reference: 'jupyter_notebook_ip',
+                allowBlank: false,
+                margin: '0 5 0 0',
+                flex: 5
+            }, {
+                xtype: 'button',
+                text: 'Check',
+                flex: 1,
+                formBind: true,
+                margin: '0 5 0 0',
+                listeners: {
+                    click: 'onCheckJupyterNotebook'
+                }
+            }]
         }]
-    }*/],
+    }],
 
     listeners: {
         afterrender: function ( me, eOpts ) {

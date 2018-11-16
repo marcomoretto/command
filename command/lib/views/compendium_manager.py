@@ -1,4 +1,8 @@
+import importlib
+import inspect
 import json
+import os
+import pkgutil
 
 from channels import Channel, Group
 from django.db.models import Q
@@ -6,6 +10,8 @@ from django.http import HttpResponse
 from django.views import View
 
 import command.consumers
+
+from command.lib.anno.base_parser import BaseParser
 from command.lib.coll.biological_feature import importers
 from command.lib.db.admin.compendium_database import CompendiumDatabase
 from command.lib.db.admin.compendium_type import CompendiumType
@@ -308,7 +314,9 @@ class CompendiumManagerView(View):
         query_response = query_response[start:end]
 
         compendia = []
-        file_types = []
+        importe_mapping_file_types = []
+        ontology_file_types = BaseParser.get_parser_classes()
+
         permitted_db = command.consumers.GroupCompendiumPermission.get_permitted_db(user)
         for db in query_response:
             if not user.is_staff and not user.is_superuser and db.compendium_nick_name not in permitted_db:
@@ -317,10 +325,12 @@ class CompendiumManagerView(View):
             try:
                 compendium['bio_features_fields'] = [bff.to_dict() for bff in
                                                      BioFeatureFields.objects.using(db.compendium_nick_name).all()]
-                file_types = [{'file_type': cls.FILE_TYPE_NAME} for cls in importers.importer_mapping[db.compendium_type.bio_feature_name]]
+                importe_mapping_file_types = [{'file_type': cls.FILE_TYPE_NAME} for cls in importers.importer_mapping[db.compendium_type.bio_feature_name]]
+                ontology_file_types = [{"file_type": cls.FILE_TYPE_NAME} for cls in ontology_file_types]
             except Exception as e:
                 pass
-            compendium['bio_feature_file_types'] = file_types
+            compendium['ontology_file_types'] = ontology_file_types
+            compendium['bio_feature_file_types'] = importe_mapping_file_types
             compendia.append(compendium)
 
         channel.send({

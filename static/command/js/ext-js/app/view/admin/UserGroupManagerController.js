@@ -226,15 +226,13 @@ Ext.define('command.view.admin.UserGroupManagerController', {
     onGroupSelection: function (dv, record, item, index, e) {
         var parent = dv.findParentByType('main');
         var compendiumGrid = parent.down('#compendium_privileges');
-        var groupGrid = parent.down('#group');
-        if (compendiumGrid.disabled) {
-            compendiumGrid.enable();
-        } else {
-            var compendiumGrid = parent.down('#compendium_privileges');
-            var compendium = compendiumGrid.getSelection()[0];
-            if (compendium) {
-                this.onCompendiumSelection(dv.up('component'));
-            }
+        console.log(compendiumGrid.id);
+        compendiumGrid.setDisabled(false);
+        compendiumGrid.setDisabled(true);
+        compendiumGrid.setDisabled(false);
+        var compendium = compendiumGrid.getSelection()[0];
+        if (compendium) {
+            this.onCompendiumSelection(dv.up('component'));
         }
     },
 
@@ -245,7 +243,9 @@ Ext.define('command.view.admin.UserGroupManagerController', {
         ws.listen();
         ws.demultiplex(request.view, function(action, stream) {
             if (action.request.operation == request.operation) {
-                me.store.loadData(action.data.privileges, false);
+                me.getRootNode().removeAll();
+                me.getRootNode().appendChild(action.data.privileges);
+                console.log(action.data.privileges);
             }
             if (action.request.operation == 'refresh') {
                 ws.stream(request.view).send(request);
@@ -275,83 +275,57 @@ Ext.define('command.view.admin.UserGroupManagerController', {
                 if (e.dock=='bottom')
                     return e;
             });
-        me.removeDocked(bottom_toolbar)
+        me.removeDocked(bottom_toolbar);
+        me.setDisabled(false);
+        me.setDisabled(true);
+    },
+
+    onPrivilegesCheckChange: function(node, checked, options){
+        var parent = this.view;
+        var groupGrid = parent.down('#group');
+        var group = groupGrid.getSelection()[0];
+        var compendiumGrid = parent.down('#compendium_privileges');
+        var preferencesPanel = parent.down('#privileges');
+        var compendium = compendiumGrid.getSelection()[0];
+        var request = groupGrid.getRequestObject('update_group_privileges');
+        if (node.data.leaf) {
+            request.values = {'compendium_id': compendium.id, 'group_id': group.id,
+                'permission_codename': [node.data.codename], 'select': checked};
+        } else {
+            request.values = {'compendium_id': compendium.id, 'group_id': group.id,
+                'permission_codename': [], 'select': checked};
+            node.cascadeBy(function(n){
+                n.set('checked', checked);
+                if (n.data.leaf) {
+                    request.values.permission_codename.push(n.data.codename);
+                }
+            });
+        }
+        request.values = JSON.stringify(request.values);
+        Ext.Ajax.request({
+            url: request.view + '/' + request.operation,
+            params: request,
+            success: function (response) {
+                command.current.checkHttpResponse(response);
+            },
+            failure: function (response) {
+                console.log('Server error', reponse);
+            }
+        });
     },
 
     onCompendiumSelection: function ( dv, record, index, eOpts ) {
+        var ws = command.current.ws;
+        var operation = 'read_privileges';
         var parent = dv.view.findParentByType('main');
+        var privileges = parent.down('#privileges');
         var groupGrid = parent.down('#group');
         var group = groupGrid.getSelection()[0];
         var compendiumGrid = parent.down('#compendium_privileges');
-        var preferencesPanel = parent.down('#privileges');
         var compendium = compendiumGrid.getSelection()[0];
-        var request = groupGrid.getRequestObject('read_group_privileges');
+        var request = privileges.getRequestObject(operation);
         request.values = JSON.stringify({'compendium_id': compendium.id, 'group_id': group.id});
-        var privilegesGrid = parent.down('#privileges');
-        privilegesGrid.enable();
-        Ext.Ajax.request({
-            url: request.view + '/' + request.operation,
-            params: request,
-            success: function (response) {
-                if (command.current.checkHttpResponse(response)) {
-                    var resp = JSON.parse(response.responseText);
-                    privilegesGrid.suspendEvents(); // avoid to fire select event
-                    privilegesGrid.getSelectionModel().deselectAll();
-                    privilegesGrid.resumeEvents();
-                    privilegesGrid.getStore().getRange().forEach(function(e,i) {
-                        if (resp.permissions.indexOf(e.data.codename) > -1) {
-                            privilegesGrid.getSelectionModel().select(i, true, true);
-                        }
-                    });
-                }
-            },
-            failure: function (response) {
-                console.log('Server error', reponse);
-            }
-        });
-    },
-
-    onPermissionSelection: function ( dv, record, index, eOpts ) {
-        var parent = dv.view.findParentByType('main');
-        var groupGrid = parent.down('#group');
-        var group = groupGrid.getSelection()[0];
-        var compendiumGrid = parent.down('#compendium_privileges');
-        var preferencesPanel = parent.down('#privileges');
-        var compendium = compendiumGrid.getSelection()[0];
-        var request = groupGrid.getRequestObject('update_group_privileges');
-        request.values = JSON.stringify({'compendium_id': compendium.id, 'group_id': group.id,
-            'permission_codename': record.data.codename, 'select': true});
-        Ext.Ajax.request({
-            url: request.view + '/' + request.operation,
-            params: request,
-            success: function (response) {
-                command.current.checkHttpResponse(response);
-            },
-            failure: function (response) {
-                console.log('Server error', reponse);
-            }
-        });
-    },
-
-    onPermissionDeselection: function ( dv, record, index, eOpts ) {
-        var parent = dv.view.findParentByType('main');
-        var groupGrid = parent.down('#group');
-        var group = groupGrid.getSelection()[0];
-        var compendiumGrid = parent.down('#compendium_privileges');
-        var preferencesPanel = parent.down('#privileges');
-        var compendium = compendiumGrid.getSelection()[0];
-        var request = groupGrid.getRequestObject('update_group_privileges');
-        request.values = JSON.stringify({'compendium_id': compendium.id, 'group_id': group.id,
-            'permission_codename': record.data.codename, 'select': false});
-        Ext.Ajax.request({
-            url: request.view + '/' + request.operation,
-            params: request,
-            success: function (response) {
-                command.current.checkHttpResponse(response);
-            },
-            failure: function (response) {
-                console.log('Server error', reponse);
-            }
-        });
+        ws.stream(request.view).send(request);
+        privileges.enable();
     }
 });

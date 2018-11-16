@@ -46,6 +46,29 @@ class AdminOptionsView(View):
         return HttpResponse(json.dumps({'success': True}),
                             content_type="application/json")
 
+    @staticmethod
+    @forward_exception_to_http
+    def update_admin_option_jupyter_notebook_ip(request, *args, **kwargs):
+        values = json.loads(request.POST['values'])
+
+        item = list(values.items())[0]
+
+        AdminOptions.objects.filter(option_name=item[0]).delete()
+        option = AdminOptions(option_name=item[0], option_value=item[1])
+        option.save()
+
+        Group('admin').send({
+            'text': json.dumps({
+                'stream': request.POST['view'],
+                'payload': {
+                    'request': {'operation': 'refresh'},
+                    'data': None
+                }
+            })
+        })
+        return HttpResponse(json.dumps({'success': True}),
+                            content_type="application/json")
+
 
     @staticmethod
     @forward_exception_to_http

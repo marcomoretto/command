@@ -43,7 +43,9 @@ CELERY_IMPORTS = (
     'command.lib.tasks.run_platform_mapper',
     'command.lib.tasks.import_experiment',
     'command.lib.tasks.import_platform_mapping',
-    'command.lib.tasks.export_data'
+    'command.lib.tasks.export_data',
+    'command.lib.tasks.ontology',
+    'command.lib.tasks.annotation',
 )
 
 #: Only add pickle to this list if your broker is secured
@@ -166,3 +168,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+JUPYTER_TOKEN = os.environ['JUPYTER_TOKEN']

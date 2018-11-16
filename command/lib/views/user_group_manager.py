@@ -1,5 +1,7 @@
 import json
+from urllib.parse import urlparse
 
+import requests
 from channels import Channel, Group
 from django.contrib.auth.models import Group as UserGroup
 from django.contrib.auth.models import User
@@ -8,6 +10,7 @@ from django.http import HttpResponse
 from django.views import View
 
 import command.consumers
+from command.lib.db.admin.admin_options import AdminOptions
 from command.lib.db.admin.compendium_database import CompendiumDatabase
 from command.lib.utils.decorators import forward_exception_to_http, forward_exception_to_channel
 
@@ -251,17 +254,14 @@ class UserGroupManagerView(View):
     def read_privileges(channel_name, view, request, user):
         channel = Channel(channel_name)
 
-        permissions = command.consumers.GroupCompendiumPermission.get_all_permissions()
-        selected = {e['codename']: 0 for e in permissions}
         if 'values' in request:
-            group_permissions = UserGroup.objects.get(id=request['values']['group_id']).permissions.all()
-            for compendium_id in request['values']['compendium_ids']:
-                db = CompendiumDatabase.objects.get(id=compendium_id)
-                for gc in group_permissions.filter(content_type__app_label=db.compendium_nick_name):
-                    selected[gc.codename] += 1
-            for p in permissions:
-                p['selected'] = len(request['values']['compendium_ids']) != 0 and selected[p['codename']] == len(
-                    request['values']['compendium_ids'])
+            req = json.loads(request['values'])
+            group_permissions = UserGroup.objects.get(id=req['group_id']).permissions.all()
+            db = CompendiumDatabase.objects.get(id=req['compendium_id'])
+            selected = [gc.codename for gc in group_permissions.filter(content_type__app_label=db.compendium_nick_name)]
+            permissions = command.consumers.GroupCompendiumPermission.get_all_permissions(selected)
+        else:
+            permissions = command.consumers.GroupCompendiumPermission.get_all_permissions()
 
         channel.send({
             'text': json.dumps({
@@ -282,28 +282,15 @@ class UserGroupManagerView(View):
         values = json.loads(request.POST['values'])
         group = UserGroup.objects.get(id=values['group_id'])
         db = CompendiumDatabase.objects.get(id=values['compendium_id'])
-        permission_codename = values['permission_codename']
-        permission = command.consumers.GroupCompendiumPermission.get_permission(
-            permission_codename,
-            db
-        )
-        if values['select']:
-            group.permissions.add(permission)
-        else:
-            group.permissions.remove(permission)
-            permission.delete()
+        for permission_codename in values['permission_codename']:
+            permission = command.consumers.GroupCompendiumPermission.get_permission(
+                permission_codename,
+                db
+            )
+            if values['select']:
+                group.permissions.add(permission)
+            else:
+                group.permissions.remove(permission)
+                permission.delete()
 
         return HttpResponse(json.dumps({'success': True}), content_type="application/json")
-
-
-
-    @staticmethod
-    @forward_exception_to_http
-    def read_group_privileges(request, *args, **kwargs):
-        values = json.loads(request.POST['values'])
-        db = CompendiumDatabase.objects.get(id=values['compendium_id'])
-        group_permissions = UserGroup.objects.get(id=values['group_id']).permissions.filter(content_type__app_label=db.compendium_nick_name)
-        permissions = [permission.codename for permission in group_permissions]
-
-        return HttpResponse(json.dumps({'success': True, 'permissions': permissions}),
-                            content_type="application/json")

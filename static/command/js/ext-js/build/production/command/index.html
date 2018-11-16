@@ -60,6 +60,9 @@ a.cache()}c.notifyUpdateReady()},notifyUpdateReady:function(){"checking"!==c.app
 1);"/"==f?a.substring(2,e+2)!==c&&(b=!1):"f"==f?a.substring(10,e+10)!==c&&(b=!1):"."==f&&a.substring(1,e+1)!==c&&(b=!1);return b},parseResult:function(a){var c={};!a.exception&&0!==a.status||f.env.phantom?200<=a.status&&300>a.status||304===a.status||f.env.phantom||0===a.status&&0<a.content.length?c.content=a.content:c.error=!0:c.error=!0;return c}};return c}();Ext.manifest=Ext.manifest||"bootstrap";Ext.Microloader.run();</script>
     <script src="{% static "channels/js/websocketbridge.js" %}"></script>
     <script src="{% static "command/js/ace/src-min/ace.js" %}"></script>
+    <script src="{% static "command/js/cytoscape.js/dist/cytoscape.min.js" %}"></script>
+    <script src="{% static "command/js/dagre/dagre.min.js" %}"></script>
+    <script src="{% static "command/js/dagre/cytoscape-dagre.js" %}"></script>
 </head>
 <body>
 </body>

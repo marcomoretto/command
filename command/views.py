@@ -1,5 +1,7 @@
+import crypt
 import json
 import os
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -114,3 +116,7 @@ def check_login(request):
             'is_admin': False,
             'views': []
         }), content_type="application/json")
+
+
+def test(request):
+    return HttpResponse(json.dumps({'test': True}), content_type="application/json")

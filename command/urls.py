@@ -18,6 +18,7 @@ from django.conf.urls import url
 from command import views
 from command.lib.views.admin_options_view import AdminOptionsView
 from command.lib.views.bio_feature import BioFeatureView, BioFeatureGeneView
+from command.lib.views.bio_feature_anno import BioFeatureAnnoView
 from command.lib.views.bio_feature_reporter import BioFeatureReporterView
 from command.lib.views.compendium_manager import CompendiumManagerView
 from command.lib.views.experiment_local import ExperimentLocalView
@@ -25,10 +26,15 @@ from command.lib.views.experiment_public import ExperimentPublicView
 from command.lib.views.experiments import ExperimentView
 from command.lib.views.export_data import ExportDataView
 from command.lib.views.file_assignment import FileAssignmentView
+from command.lib.views.jupyter_notebook import JupyterNotebookView
 from command.lib.views.message_log import MessageLogView
+from command.lib.views.normalization_experiment import NormalizationExperimentView
+from command.lib.views.normalization_manager import NormalizationManagerView
+from command.lib.views.ontologies import OntologiesView
 from command.lib.views.parse_experiment import ParseExperimentView
 from command.lib.views.platforms import PlatformView, MicroarrayPlatformView
 from command.lib.views.script_tree_view import ScriptTreeView
+from command.lib.views.test import TestView
 from command.lib.views.user_group_manager import UserGroupManagerView
 
 urlpatterns = [
@@ -61,4 +67,12 @@ urlpatterns = [
     url(r'^export_data/(?P<operation>\w+)$', ExportDataView.as_view(), name='export_data'),
     url(r'^microarray_platforms/(?P<operation>\w+)$', MicroarrayPlatformView.as_view(), name='microarray_platforms'),
     url(r'^check_bio_features/$', views.check_bio_features, name='check_bio_features'),
+    url(r'^ontologies/(?P<operation>\w+)$', OntologiesView.as_view(), name='ontologies'),
+    url(r'^ontology_nodes/(?P<operation>\w+)$', OntologiesView.as_view(), name='ontology_nodes'),
+    url(r'^bio_feature_anno/(?P<operation>\w+)$', BioFeatureAnnoView.as_view(), name='bio_feature_anno'),
+    url(r'^jupyter_notebook/(?P<operation>\w+)$', JupyterNotebookView.as_view(), name='jupyter_notebook'),
+    url(r'^normalization_manager/(?P<operation>\w+)$', NormalizationManagerView.as_view(), name='normalization_manager'),
+    url(r'^normalization_experiment/(?P<operation>\w+)$', NormalizationExperimentView.as_view(), name='normalization_experiment'),
+
+    url(r'^test/(?P<operation>\w+)$', TestView.as_view(), name='test'),
 ]
