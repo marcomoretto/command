@@ -154,7 +154,8 @@ def ws_connect(message):
         Group("admin").add(message.reply_channel)
     for db in CompendiumDatabase.objects.all():
         Group("compendium_" + str(db.id)).add(message.reply_channel)
-    message.http_session['channel_name'] = message.reply_channel.name
+    if message.http_session:
+        message.http_session['channel_name'] = message.reply_channel.name
     message.reply_channel.send({"accept": True})
 
 

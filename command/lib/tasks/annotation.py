@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 
 from command.lib.anno.annotation_parser import BaseAnnotationParser
 from command.lib.db.admin.compendium_database import CompendiumDatabase
+from command.lib.db.compendium.annotation_value import AnnotationValue
 from command.lib.db.compendium.bio_feature import BioFeature
 from command.lib.db.compendium.bio_feature_annotation import BioFeatureAnnotation
 from command.lib.db.compendium.message_log import MessageLog
@@ -82,11 +83,24 @@ def annotation_task(self, user_id, compendium_id, ontology_id, filename, file_ty
     ann_map = dict(OntologyNode.objects.using(compendium.compendium_nick_name).filter(ontology=ontology).values_list('original_id', 'id'))
     for chunk in parser.parse(filename):
         annotations = []
+        annotation_values = []
         for ann in chunk:
-            bfa = BioFeatureAnnotation()
             if ann[0] in bf_map and ann[1] in ann_map:
+                ann_val = AnnotationValue(
+                    ontology_node_id=ann_map[ann[1]],
+                    value='True',
+                    value_type='boolean'
+                )
+                annotation_values.append(ann_val)
+        AnnotationValue.objects.using(compendium.compendium_nick_name).bulk_create(annotation_values)
+        annotation_values_map = dict(AnnotationValue.objects.using(compendium.compendium_nick_name).filter(ontology_node__ontology=ontology).
+                                     values_list('ontology_node_id', 'id')
+                                     )
+        for ann in chunk:
+            if ann[0] in bf_map and ann[1] in ann_map:
+                bfa = BioFeatureAnnotation()
                 bfa.bio_feature_id = bf_map[ann[0]]
-                bfa.ontology_node_id = ann_map[ann[1]]
+                bfa.annotation_value_id = annotation_values_map[ann_map[ann[1]]]
                 annotations.append(bfa)
         BioFeatureAnnotation.objects.using(compendium.compendium_nick_name).bulk_create(annotations)
 

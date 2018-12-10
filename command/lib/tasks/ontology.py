@@ -98,7 +98,7 @@ def create_ontology_task(self, user_id, compendium_id, ontology_name,
                 node.ontology = ontology
                 node.original_id = n['data']['id']
                 node.json = n['data']
-                if not ontology.json or 'columns' not in ontology.json:
+                if not ontology.json or 'columns' not in ontology.json or len(ontology.json['columns']) == 0:
                     ontology.json = {'columns': [{'text': x.title().replace('_', ' '), 'data_index': x} for x in n['data'].keys() if x != 'id']}
                     ontology.save(using=compendium.compendium_nick_name)
                 nodes.append(node)
@@ -107,12 +107,17 @@ def create_ontology_task(self, user_id, compendium_id, ontology_name,
         for c in chunks(structure['elements']['edges'], 10000):
             edges = []
             for e in c:
+                e_type = None
+                if 'key' in e['data']:
+                    e_type = e['data']['key']
+                elif 'type' in e['data']:
+                    e_type = e['data']['type']
                 edge = OntologyEdge()
                 edge.source_id = node_ids[e['data']['source']]
                 edge.target_id = node_ids[e['data']['target']]
                 edge.is_directed = True
                 edge.ontology = ontology
-                edge.edge_type = e['data']['key']
+                edge.edge_type = e_type
                 edges.append(edge)
             OntologyEdge.objects.using(compendium.compendium_nick_name).bulk_create(edges)
 

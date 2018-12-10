@@ -7,6 +7,7 @@ import shutil
 from django.core.management import call_command
 from django.db import connections, transaction
 
+from command.lib.db.compendium.annotation_value import AnnotationValue
 from command.lib.db.compendium.bio_feature_annotation import BioFeatureAnnotation
 from command.lib.db.compendium.normalization import Normalization
 from command.lib.db.compendium.normalization_experiment import NormalizationExperiment
@@ -31,6 +32,7 @@ from command.lib.db.compendium.bio_feature_fields import BioFeatureFields
 from command.lib.db.admin.compendium_database import CompendiumDatabase
 from command.lib.db.compendium.data_source import DataSource
 from command.lib.db.compendium.experiment import Experiment
+from command.lib.db.compendium.sample_annotation import SampleAnnotation
 from command.lib.db.compendium.status import Status
 from command.lib.db.compendium.message_log import MessageLog
 from command.lib.db.compendium.platform import Platform
@@ -140,6 +142,12 @@ def init_compendium(db_id):
                 pass
     call_command('migrate', database=key)
     if compendium.compendium_type.name == 'gene_expression':
+        ValueType(name='I', description='Intensity').save(using=key)
+        ValueType(name='BG', description='BackGround').save(using=key)
+        ValueType(name='IBG', description='Intensity Background corrected').save(using=key)
+        ValueType(name='M', description='M-value, Intensity log-ratio').save(using=key)
+        ValueType(name='A', description='A-value, Intensity average').save(using=key)
+        ValueType(name='C', description='Count').save(using=key)
         geo_db = DataSource(source_name='GEO',
                             python_class='command.lib.coll.public_database.GEOPublicDatabase',
                             is_local=False)
@@ -185,6 +193,12 @@ def init_compendium(db_id):
     status_platform_imported = Status(name='platform_imported', description='Platform is imported')
     status_platform_importing.save(using=key)
     status_platform_imported.save(using=key)
+    status_annotated = Status(name='experiment_annotated', description='Experiment samples have been annotated')
+    status_design_defined = Status(name='experiment_design_defined', description='Experiment design has been defined')
+    status_normalized = Status(name='experiment_normalized', description='Experiment has been normalized')
+    status_annotated.save(using=key)
+    status_design_defined.save(using=key)
+    status_normalized.save(using=key)
     # copy over data from platform type and biological features tables
     for plt_type_admin in PlatformTypeAdmin.objects.all():
         plt_type = PlatformType()

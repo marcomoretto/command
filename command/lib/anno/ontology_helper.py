@@ -30,7 +30,7 @@ class OntologyHelper:
                 Q(source_id__in=node_ids) & Q(target_id__in=node_ids))
         for e in edges_qr:
             edges.append({'data': {
-                'id': e.id,
+                'id': 'edge_' + str(e.id),
                 'source': e.source.id,
                 'target': e.target.id
             }})

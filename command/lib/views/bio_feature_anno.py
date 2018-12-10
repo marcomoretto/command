@@ -151,8 +151,8 @@ class BioFeatureAnnoView(View):
             b = bf.to_dict()
             b['annotation'] = []
             for bfa in bf.biofeatureannotation_set.all():
-                ontology = bfa.ontology_node.ontology
-                node = bfa.ontology_node
+                ontology = bfa.annotation_value.ontology_node.ontology
+                node = bfa.annotation_value.ontology_node
                 ann = node.to_dict()
                 ann['ontology'] = ontology.to_dict()
                 ann['columns'] = ontology.json['columns']

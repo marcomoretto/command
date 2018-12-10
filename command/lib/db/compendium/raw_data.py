@@ -2,15 +2,14 @@ from django.db import models
 
 from command.lib.db.compendium.bio_feature_reporter import BioFeatureReporter
 from command.lib.db.compendium.sample import Sample
+from command.lib.db.compendium.value_type import ValueType
 
 
 class RawData(models.Model):
     sample = models.ForeignKey(Sample, db_index=True, on_delete=models.CASCADE, null=False, default=1)
     bio_feature_reporter = models.ForeignKey(BioFeatureReporter, db_index=True, on_delete=models.CASCADE, null=False, default=1)
     value = models.FloatField(blank=True, null=True)
-
-    class Meta:
-        unique_together = ("sample", "bio_feature_reporter")
+    value_type = models.ForeignKey(ValueType, on_delete=models.CASCADE, default=1, null=True, blank=True)
 
     def to_dict(self, reduced=False):
         fields = ['id', 'value']

@@ -257,7 +257,7 @@ class CompendiumManagerView(View):
             admin_db.compendium_nick_name = values['admin']['username']
             admin_db.db_user = values['admin']['username']
             admin_db.db_password = values['admin']['password']
-            create_db(values['admin']['username'], admin_db.get_setting_entry()[1], db.compendium_nick_name)
+            create_db(values['admin']['username'], admin_db.get_setting_entry()[1], db.compendium_nick_name, db.db_user)
         db.save()
         init_database_connections()
         Group('admin').send({
