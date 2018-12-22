@@ -44,7 +44,7 @@ Main features are.
    deploy
    database_schema
    use_cases
-   python_script_doc
+   modules
    for_developers
 
 

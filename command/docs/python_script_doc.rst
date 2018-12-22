@@ -1,4 +1,0 @@
-Python scripts documentation
-============================
-
-TODO

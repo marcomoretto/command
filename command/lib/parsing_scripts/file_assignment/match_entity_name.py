@@ -1,4 +1,14 @@
 def assign(input_files, entity, entity_type, parameters):
+    """Assign the selected input files (or all the files if checked) to every ENTITY with matching NAME
+
+    For each ENTITY (experiment, platforms or samples) for which a parsing script is selected, only the (selected)
+    input files with a name that match the one of the entity will be assinged
+    (for example a file name GSE123.soft would match the experiment entity GSE123).
+
+    PARAMETERS:
+        None
+
+    """
     files = []
     name = ''
     if entity_type == 'sample':

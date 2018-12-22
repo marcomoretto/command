@@ -1,4 +1,15 @@
 def sample_column_identifier(query,header):
+    """Tries to automatically identify the header column that contains the raw data given some query information (like the dye color)
+
+    Multi-channel array might have different dye color on different samples (dye-swap) and thus it would be tedious to manually
+    define it for each single sample. This function tries to do it for you and is tipically invoked for the SOFT sample files.
+
+    PARAMETERS:
+        *query* (string): The query string is usually something that contains information about the color i.e. cy3, red, green etc.
+
+        *header* (list): The header is a list of string from which to chose one that will match the query
+
+    """
     
     # Identifies the relevant sample data column based on a channel/color label query term in 3 steps
     
