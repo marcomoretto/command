@@ -463,15 +463,152 @@ The class should be defined extending the class ``PublicDatabase`` that is defin
   * ``create_experiment_structure``: starting from the information of the downloaded files, this method should create the *experiment*, *platform*, *sample* structures and save it using ``Experiment``, ``Platform`` and ``Sample`` Django models.
 
 
-Add new platform type
----------------------
-
 Add new compendium type
 -----------------------
+This is by far the easiest thing to do since it's just a matter of adding one tuple on the ``command`` DB. The table to be modified is the ``command_compendiumtype`` table. At the moment
+the only compendium type defined is the gene expression one. The fields are *name*, *description* and the *biological feature name*, so respectively *gene_expression*,	*Gene expression compendium* and *gene*.
+
+.. screenshot_test_6:
+.. figure::  _static/screenshot_db_compendium.png
+   :align:   center
 
 Add new biological feature file importer
 ----------------------------------------
+All the classes releated to importing *biological features* are located `here <https://github.com/marcomoretto/command/tree/master/command/lib/coll/biological_feature>`_. First thing to do is to
+inform the dispatcher in the ``importers.py`` file which are the classes responsible to manage different file types. For example, genes will be imported using FASTA files. The second step is
+to actually implement the class extending the ``BaseImporter`` class. The newly defined class will need to implement the ``parse`` method and redefine the ``FILE_TYPE_NAME`` variable.
+
+.. code-block:: python
+
+   # fasta_file_importer.py
+
+   class FastaFileImporter(BaseImporter):
+        FILE_TYPE_NAME = 'FASTA'
+
+        def parse(self, filename):
+            sequence_field = BioFeatureFields.objects.using(self.compendium).get(name='sequence')
+            with transaction.atomic(using=self.compendium):
+                with open(filename, 'rU') as handle:
+                    for record in SeqIO.parse(handle, 'fasta'):
+                        gene = BioFeature()
+                        gene.name = record.id
+                        gene.description = record.description
+                        gene.save(using=self.compendium)
+                        bf_value = BioFeatureValues()
+                        bf_value.bio_feature = gene
+                        bf_value.bio_feature_field = sequence_field
+                        bf_value.value = str(record.seq)
+                        bf_value.save(using=self.compendium)
+
+.. screenshot_test_7:
+.. figure::  _static/screenshot_fasta_importer.png
+   :align:   center
+
+Add new platform type
+---------------------
+To add a new platform type there are several step to do and mostly depends on the kind of platform is going to be added.
+
+**Database entry**
+To add a new platform type for a single compendium (organism) you will need to add a tuple with name, description, bio feature reporter name and the compendium type ID, for example:
+*microarray*, *MicroArray*, *probe* and	*1* to the ``command_platformtype`` table. If you want *every* new compendium you are going to create to have such new platform you will need to add the same tuple to the
+``command_platformtypeadmin`` table in the ``command`` DB.
+
+.. screenshot_test_8:
+.. figure::  _static/screenshot_plt_type.png
+   :align:   center
+
+**Reporters ExtJS GUI**
+Next step will be to inform the GUI how to behave when the user wants to see the *biological feature reporters* associated with the new platform. For example in case of Microarray the
+*biological feature reporters* are the probes. The file to modify is ``PlatformController.js`` (defined `here <https://github.com/marcomoretto/command/blob/master/static/command/js/ext-js/app/view/data_collection/platform/PlatformsController.js>`_).
+``onViewBioFeatureReporter`` is the method to modify adding a new case for the new platform. For example in case of RNA-seq we simply display a message to say there's no associated
+*biological feature reporters* since the gene expression measurement in this case is directly given by read counts. For Microarray instead we have probes and thus we will open a new
+window to show the probes associated with this platform, the ``window_bio_feature_reporter`` window.
+
+.. code-block:: javascript
+
+    // PlatformsController.js
+
+    onViewBioFeatureReporter: function (me) {
+        var selection = me.up('grid').getSelectionModel().getSelection()[0].data;
+        var comp = JSON.parse(localStorage.getItem("current_compendium"));
+        if (selection.platform_type) {
+            switch (selection.platform_type.name) {
+                case 'rnaseq':
+                    Ext.MessageBox.show({
+                        title: 'RNA-seq platform',
+                        msg: 'For RNA-seq platform ' + selection.platform_access_id +  ', ' +  comp.compendium_type.bio_feature_name + ' is/are directly measured',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.INFO,
+                        fn: function (a) {
+                        }
+                    });
+                    break
+                case 'microarray':
+                    var win = Ext.create({
+                        xtype: 'window_bio_feature_reporter',
+                        title: 'Microarray platform ' + selection.platform_access_id + ': ' +
+                            comp.compendium_type.bio_feature_name + ' feature reporters (' + selection.platform_type.bio_feature_reporter_name + ')',
+                        platform: selection
+                    });
+                    break
+            }
+        }
 
 Add new platform mapper
 -----------------------
+When a platform has *biological feature reporters* associated, these must be mapped to the *biological features*. In case of *gene expression* compendium the *biological features* are genes.
+So to give a concrete example we will need to associate Microarray probes to genes. This step is very platform-dependant and so a lot of freedom is left to the developer to design
+the GUI. There are just few things to keep in mind in order to have everything working correctly within the COMMAND>_ framework.
+
+**Mapper ExtJS GUI**
+First thing will be to inform the GUI how to behave when the user wants to map this platform reporters to the *biological features*. The file to modify is again the ``PlatformController.js`` (defined `here <https://github.com/marcomoretto/command/blob/master/static/command/js/ext-js/app/view/data_collection/platform/PlatformsController.js>`_),
+but this time we are going to modify the ``onMapPlatformToBioFeature`` method, adding a new case for the new platform. For Microarray we defined a new window ``window_map_microarray_platform``
+`here <https://github.com/marcomoretto/command/tree/master/static/command/js/ext-js/app/view/data_collection/platform/microarray>`_. Again, in this case the developer is left completely free to design it as he wants.
+
+.. code-block:: javascript
+
+    // PlatformsController.js
+
+    onMapPlatformToBioFeature: function (me) {
+        var selection = me.up('grid').getSelectionModel().getSelection()[0].data;
+        var comp = JSON.parse(localStorage.getItem("current_compendium"));
+        if (selection.platform_type) {
+            switch (selection.platform_type.name) {
+                case 'rnaseq':
+                    Ext.MessageBox.show({
+                        title: 'RNA-seq platform',
+                        msg: 'RNA-seq platform ' + selection.platform_access_id +  ' is automatically mapped to ' + comp.compendium_type.bio_feature_name,
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.INFO,
+                        fn: function (a) {
+                        }
+                    });
+                    break
+                case 'microarray':
+                    command.current.createWin({
+                        xtype: 'window_map_microarray_platform',
+                        title: 'Map microarray platform ' + selection.platform_access_id + ' to ' + comp.compendium_type.bio_feature_name,
+                        platform: selection
+                    });
+                    break
+            }
+        }
+
+**Mapper Django View**
+The associated Django View is defined in ``platform.py`` view file `here <https://github.com/marcomoretto/command/blob/master/command/lib/views/platforms.py>`_  and for Microarray this is the ``MicroarrayPlatformView`` class.
+This is pretty standard view as described previously.
+
+**Mapper code**
+The actual code is stored in a class that will extend the ``BaseMapper`` (placeholder) class. For Microarray this class is ``MicroarrayMapper`` and is located `here <https://github.com/marcomoretto/command/blob/master/command/lib/coll/platform/microarray_mapper.py>`_.
+Last step is to inform the mapper dispatcher on which class to invoke, and this is done in the ``mappers.py`` file located `here <https://github.com/marcomoretto/command/blob/master/command/lib/coll/platform/mappers.py>`_.
+
+.. code-block:: python
+
+    // mappers.py
+
+    from command.lib.coll.platform.microarray_mapper import MicroarrayMapper
+
+    platform_mapper = {
+        'microarray': MicroarrayMapper
+    }
 
