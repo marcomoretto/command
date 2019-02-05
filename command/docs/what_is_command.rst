@@ -13,5 +13,6 @@ For microarray platforms it would be necessary to map probes to genes but before
 
 .. [#f1] Moretto, M. et al. (2015). COLOMBOS v3. 0: leveraging gene expression compendia for cross-species analyses. *Nucleic acids research*, 44(D1), D620-D623.
 .. [#f2] Moretto, M. et al. (2016). VESPUCCI: exploring patterns of gene expression in grapevine. *Frontiers in plant science*, 7, 633.
+.. [#f3] Moretto, M. et al. (2019). First step toward gene expression data integration: transcriptomic data acquisition with COMMAND>_. *BMC bioinformatics*, 20(1), 54.
 
 
