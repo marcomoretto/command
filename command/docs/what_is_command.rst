@@ -1,7 +1,7 @@
 What is COMMAND>_?
 ==================
 
-COMMAND>_[#f1]_ is an acronym that stands for **COM**\pendia **MAN**\agement **D**\esktop. It is the software used for the creation of several gene expression compendia such as COLOMBOS [#f2]_ and VESPUCCI [#f3]_. Despite being used since 2010 it has been made publicly available for anyone to use only in 2018, after having been completely rewritten.
+COMMAND>_ [#f1]_ is an acronym that stands for **COM**\pendia **MAN**\agement **D**\esktop. It is the software used for the creation of several gene expression compendia such as COLOMBOS [#f2]_ and VESPUCCI [#f3]_. Despite being used since 2010 it has been made publicly available for anyone to use only in 2018, after having been completely rewritten.
 COMMAND>_ was originally conceived for the collection (and integration) of prokaryotes microarray experiments. As time goes by it has been evolved to allow also RNA-seq experiment to be imported and other species to be managed.
 With the current implementation COMMAND>_ is still meant for gene expression data collection but can be easily extended to support other kind of quantitative measurement technology (have a look at :doc:`for_developers`).
 
