@@ -61,7 +61,7 @@ Assuming that you have `Docker Compose correctly installed <https://docs.docker.
    # 10. run worker
    docker-compose exec -d worker python3 manage.py runworker
 
-That's it! You should be able to point your browser to http://localhost and login into COMMAND>_ using:
+That's it! You should be able to point your browser to http://localhost:4242 and login into COMMAND>_ using:
   - username: ``admin``
   - password: ``admin``
 
