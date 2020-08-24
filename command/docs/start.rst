@@ -4,7 +4,7 @@ Getting start with COMMAND>_
 Getting my user id and password
 -------------------------------
 
-If you are using the public COMMAND>_ instance on https://command.fmach.it:4242 you can login using:
+If you are using the public COMMAND>_ instance on http://command.fmach.it:4242 you can login using:
 
    - username: ``guest``
    - password: ``demo``
