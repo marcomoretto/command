@@ -72,7 +72,7 @@ pyparsing==2.2.0
 pysolr==3.8.1
 python-dateutil==2.7.0
 pytz==2017.3
-PyYAML==3.13
+PyYAML==5.4
 rdflib==4.2.1
 rdflib-jsonld==0.4.0
 redis==2.10.6
