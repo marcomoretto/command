@@ -7,7 +7,7 @@ asgi-redis==1.4.3
 asgiref==1.1.2
 asn1crypto==0.24.0
 attrs==17.3.0
-autobahn==17.10.1
+autobahn==20.12.3
 Automat==0.6.0
 Babel==2.5.3
 backcall==0.1.0
