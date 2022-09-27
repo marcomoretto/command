@@ -24,11 +24,6 @@ Main features are.
 
 .. note::
 
-   Give it a try on https://command.fmach.it:4242 using:
-
-   - username: ``guest``
-   - password: ``demo``
-
    Check out the :doc:`use_cases`!
 
 
