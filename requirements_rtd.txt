@@ -52,6 +52,6 @@ sphinxcontrib-websupport==1.0.1
 tables==3.4.2
 Twisted==17.9.0
 txaio==2.8.2
-urllib3==1.22
+urllib3==1.26.5
 vine==1.1.4
 zope.interface==4.4.3
