@@ -5,7 +5,7 @@ asgi-rabbitmq==0.5.4
 asgi-redis==1.4.3
 asgiref==1.1.2
 attrs==17.3.0
-autobahn==17.10.1
+autobahn==20.12.3
 Automat==0.6.0
 Babel==2.5.3
 beautifulsoup4==4.6.0
